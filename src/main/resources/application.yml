@@ -1,0 +1,4 @@
+quarkus:
+  mongodb:
+    connection-string: mongodb://root:123456@localhost:27017
+    database: go-non-go-matrix

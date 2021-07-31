@@ -2,9 +2,7 @@ package ca.upperapps.api
 
 import ca.upperapps.domain.Criteria
 import org.bson.types.ObjectId
-import java.lang.IllegalArgumentException
 import java.net.URI
-import java.util.logging.Level
 import java.util.logging.Logger
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType

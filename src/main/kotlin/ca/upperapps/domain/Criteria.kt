@@ -9,5 +9,9 @@ import org.bson.types.ObjectId
 class Criteria(): PanacheMongoEntity() {
     companion object: PanacheMongoCompanion<Criteria>
 
+    constructor(name: String): this() {
+        this.name = name
+    }
+
     lateinit var name: String
 }

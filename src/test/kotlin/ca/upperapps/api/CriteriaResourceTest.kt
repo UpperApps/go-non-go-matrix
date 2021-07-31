@@ -7,7 +7,7 @@ import org.hamcrest.CoreMatchers.`is`
 import org.junit.jupiter.api.Test
 
 @QuarkusTest
-class CriterionResourceTest {
+class CriteriaResourceTest {
 
     @Test
     fun testHelloEndpoint() {

@@ -1,28 +1,26 @@
 package ca.upperapps.api
 
-import ca.upperapps.domain.Goal
-import ca.upperapps.domain.GoalRepository
 import ca.upperapps.domain.User
+import ca.upperapps.domain.UserRepository
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.junit.mockito.InjectMock
-import io.restassured.RestAssured.given
+import io.restassured.RestAssured
 import io.restassured.http.ContentType
 import org.bson.types.ObjectId
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.CoreMatchers
+import org.hamcrest.MatcherAssert
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.`when`
-
+import org.mockito.Mockito
 
 @QuarkusTest
-class GoalResourceTest {
+class UserResourceTest {
     companion object {
         lateinit var jsonParser: ObjectMapper
 
         @InjectMock
-        lateinit var goalRepository: GoalRepository
+        lateinit var userRepository: UserRepository
 
         @BeforeAll
         @JvmStatic
@@ -40,24 +38,18 @@ class GoalResourceTest {
         user.username = "testuser"
         user.email = "user@email.com"
 
-        val goal = Goal()
-        goal.id = ObjectId()
-        goal.name = "Test"
-        goal.user = user
+        Mockito.`when`(userRepository.findById(user.id!!)).thenReturn(user)
 
-        `when`(goalRepository.findById(goal.id!!)).thenReturn(goal)
-
-        given()
+        RestAssured.given()
             .contentType(ContentType.JSON)
-            .`when`().get("/goals/${goal.id}")
+            .`when`().get("/users/${user.id}")
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .`as`(Goal::class.java).apply {
-                assertThat(this.id, `is`(goal.id))
-                assertThat(this.name, `is`(goal.name))
-                assertThat(this.user.firstName, `is`(goal.user.firstName))
+            .`as`(User::class.java).apply {
+                MatcherAssert.assertThat(this.id, CoreMatchers.`is`(user.id))
+                MatcherAssert.assertThat(this.firstName, CoreMatchers.`is`(user.firstName))
 
             }
     }

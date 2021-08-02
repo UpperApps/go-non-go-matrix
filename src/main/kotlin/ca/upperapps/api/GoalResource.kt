@@ -2,12 +2,14 @@ package ca.upperapps.api
 
 import ca.upperapps.domain.Criteria
 import ca.upperapps.domain.Goal
+import ca.upperapps.domain.GoalRepository
 import ca.upperapps.domain.Option
 import ca.upperapps.domain.errorhandling.ErrorHandlerUtils
 import org.bson.types.ObjectId
 import org.valiktor.ConstraintViolationException
 import java.net.URI
 import java.util.logging.Logger
+import javax.inject.Inject
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -19,16 +21,18 @@ class GoalResource {
         private val logger: Logger = Logger.getLogger(javaClass.enclosingClass.name)
     }
 
+    @Inject lateinit var goalRepository: GoalRepository
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    fun listAll(): Response = Response.ok(Goal.listAll()).build()
+    fun listAll(): Response = Response.ok(goalRepository.listAll()).build()
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
     fun getGoal(@PathParam("id") id: String): Response {
         try {
-            val goal = Goal.findById(ObjectId(id))
+            val goal = goalRepository.findById(ObjectId(id))
             if (goal != null) {
                 return Response.ok(goal).build()
             }
@@ -44,7 +48,7 @@ class GoalResource {
     fun createGoal(goal: Goal): Response {
         return try {
             Goal.validate(goal)
-            goal.persist()
+            goalRepository.persist(goal)
             Response.created(URI.create("/goals/${goal.id}")).entity(goal).build()
         } catch (e: ConstraintViolationException) {
             Response.status(Response.Status.BAD_REQUEST)
@@ -58,8 +62,8 @@ class GoalResource {
     @Consumes(MediaType.APPLICATION_JSON)
     fun updateGoal(updatedGoal: Goal): Response {
         return try {
-            Goal.validate(updatedGoal)
-            updatedGoal.update()
+
+
             Response.created(URI.create("/goals/${updatedGoal.id}")).entity(updatedGoal).build()
         } catch (e: ConstraintViolationException) {
             Response.status(Response.Status.BAD_REQUEST)
@@ -71,7 +75,7 @@ class GoalResource {
     @DELETE
     @Path("/{id}")
     fun deleteGoal(@PathParam("id") id: String): Response {
-        Goal.deleteById(ObjectId(id))
+        goalRepository.deleteById(ObjectId(id))
         return Response.noContent().build()
     }
 

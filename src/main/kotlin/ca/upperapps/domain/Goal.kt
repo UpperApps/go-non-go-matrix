@@ -1,34 +1,44 @@
 package ca.upperapps.domain
 
+import ca.upperapps.domain.errorhandling.ErrorHandlerUtils
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
 import io.quarkus.mongodb.panache.common.MongoEntity
-import io.quarkus.mongodb.panache.kotlin.PanacheMongoCompanion
-import io.quarkus.mongodb.panache.kotlin.PanacheMongoEntity
+import org.bson.types.ObjectId
+import org.valiktor.ConstraintViolationException
 import org.valiktor.functions.hasSize
 import org.valiktor.functions.isNotBlank
+import org.valiktor.validate
+import java.util.logging.Level
+import java.util.logging.Logger
 
 @MongoEntity(collection = "goals")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class Goal(): PanacheMongoEntity() {
-    companion object: PanacheMongoCompanion<Goal> {
+class Goal() {
+    companion object {
+        @Suppress("JAVA_CLASS_ON_COMPANION")
+        private val logger: Logger = Logger.getLogger(javaClass.enclosingClass.name)
+
         fun validate(goal: Goal) {
-            org.valiktor.validate(goal) {
-                validate(Goal::name).isNotBlank().hasSize(1, 30)
-                validate(Goal::description).hasSize(0, 140)
+            try {
+                validate(goal) {
+                    validate(Goal::name).isNotBlank().hasSize(1, 30)
+                    validate(Goal::description).hasSize(0, 140)
+                }
+            } catch (e: ConstraintViolationException) {
+                logger.log(Level.WARNING, ErrorHandlerUtils.getValidationMessage(e).toString())
+                throw  e
             }
         }
     }
 
-    constructor(name: String, user: User): this() {
-        this.name = name
-        this.user = user
-    }
-
-    lateinit var name: String
-    val description: String? = null
+    var id: ObjectId? = null
+    lateinit var  name: String
     lateinit var user: User
+    val description: String? = null
     var criteria: List<Criteria>? = null
     var options: List<Option>? = null
+    @JsonProperty("judgement-matrix")
     var judgementMatrix: JudgementMatrix? = null
     var scenario: List<Scenario>? = null
 }

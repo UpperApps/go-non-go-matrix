@@ -48,5 +48,5 @@ class User() {
     lateinit var lastName: String
     lateinit var username: String
     lateinit var email: String
-    val password: String? = null
+    var password: String? = null
 }

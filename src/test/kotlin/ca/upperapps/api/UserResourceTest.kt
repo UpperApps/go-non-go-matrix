@@ -12,7 +12,7 @@ import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 
 @QuarkusTest
 class UserResourceTest {
@@ -38,7 +38,7 @@ class UserResourceTest {
         user.username = "testuser"
         user.email = "user@email.com"
 
-        Mockito.`when`(userRepository.findById(user.id!!)).thenReturn(user)
+        `when`(userRepository.findById(user.id!!)).thenReturn(user)
 
         RestAssured.given()
             .contentType(ContentType.JSON)

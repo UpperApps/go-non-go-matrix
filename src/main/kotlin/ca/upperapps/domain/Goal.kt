@@ -35,7 +35,7 @@ class Goal() {
     var id: ObjectId? = null
     lateinit var  name: String
     lateinit var user: User
-    val description: String? = null
+    var description: String? = null
     var criteria: List<Criteria>? = null
     var options: List<Option>? = null
     @JsonProperty("judgement-matrix")

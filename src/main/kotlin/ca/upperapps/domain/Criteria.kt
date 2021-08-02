@@ -1,17 +1,19 @@
 package ca.upperapps.domain
 
-import io.quarkus.mongodb.panache.common.MongoEntity
 import io.quarkus.mongodb.panache.kotlin.PanacheMongoCompanion
 import io.quarkus.mongodb.panache.kotlin.PanacheMongoEntity
-import org.bson.types.ObjectId
+import org.valiktor.functions.hasSize
+import org.valiktor.functions.isNotBlank
+import org.valiktor.validate
+import java.util.*
 
-@MongoEntity(collection = "criteria")
-class Criteria(): PanacheMongoEntity() {
-    companion object: PanacheMongoCompanion<Criteria>
+// TODO Check if this class can become a dataclass. Compare the object saved with the Option object.
+data class Criteria(val name: String = UUID.randomUUID().toString()) : PanacheMongoEntity() {
+    companion object : PanacheMongoCompanion<Criteria>
 
-    constructor(name: String): this() {
-        this.name = name
+    init {
+        validate(this) {
+            validate(Criteria::name).isNotBlank().hasSize(1, 50)
+        }
     }
-
-    lateinit var name: String
 }

@@ -36,6 +36,7 @@ class Goal() {
     lateinit var  name: String
     lateinit var user: User
     var description: String? = null
+    // TODO Create a deserializer for the List/Map classes.
     var criteria: List<Criteria>? = null
     var options: List<Option>? = null
     @JsonProperty("judgement-matrix")

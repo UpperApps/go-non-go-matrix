@@ -1,11 +1,13 @@
 package ca.upperapps.api
 
+import ca.upperapps.api.dto.UserDTO
 import ca.upperapps.domain.User
 import ca.upperapps.domain.UserRepository
 import ca.upperapps.domain.errorhandling.ErrorHandlerUtils
 import org.bson.types.ObjectId
 import org.valiktor.ConstraintViolationException
 import java.net.URI
+import java.util.logging.Level
 import java.util.logging.Logger
 import javax.inject.Inject
 import javax.ws.rs.*
@@ -43,15 +45,17 @@ class UsersResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    fun createUser(user: User): Response {
+    fun createUser(userDTO: UserDTO): Response {
         return try {
-            User.validate(user)
-            userRepository.persist(user)
-            Response.created(URI.create("/users/${user.id}")).entity(user).build()
+            userRepository.persist(userDTO.toDomain())
+            Response.created(URI.create("/users/${userDTO.id}")).entity(userDTO).build()
         } catch (e: ConstraintViolationException) {
             Response.status(Response.Status.BAD_REQUEST)
                 .entity(ErrorHandlerUtils.getValidationMessage(e))
                 .build()
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, e.stackTraceToString())
+            return Response.noContent().build()
         }
     }
 
@@ -60,7 +64,6 @@ class UsersResource {
     @Consumes(MediaType.APPLICATION_JSON)
     fun updateUser(updatedUser: User): Response {
         return try {
-            User.validate(updatedUser)
             userRepository.update(updatedUser)
             Response.created(URI.create("/users/${updatedUser.id}")).entity(updatedUser).build()
         } catch (e: ConstraintViolationException) {

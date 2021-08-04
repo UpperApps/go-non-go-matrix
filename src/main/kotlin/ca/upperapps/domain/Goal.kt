@@ -22,7 +22,7 @@ class Goal() {
         fun validate(goal: Goal) {
             try {
                 validate(goal) {
-                    validate(Goal::name).isNotBlank().hasSize(1, 30)
+                    validate(Goal::name).isNotBlank().hasSize(1, 50)
                     validate(Goal::description).hasSize(0, 140)
                 }
             } catch (e: ConstraintViolationException) {
@@ -36,7 +36,6 @@ class Goal() {
     lateinit var  name: String
     lateinit var user: User
     var description: String? = null
-    // TODO Create a deserializer for the List/Map classes.
     var criteria: List<Criteria>? = null
     var options: List<Option>? = null
     @JsonProperty("judgement-matrix")

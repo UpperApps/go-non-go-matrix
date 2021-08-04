@@ -1,5 +1,6 @@
 package ca.upperapps.api
 
+import ca.upperapps.api.dto.GoalDTO
 import ca.upperapps.domain.Criteria
 import ca.upperapps.domain.Goal
 import ca.upperapps.domain.GoalRepository
@@ -8,6 +9,7 @@ import ca.upperapps.domain.errorhandling.ErrorHandlerUtils
 import org.bson.types.ObjectId
 import org.valiktor.ConstraintViolationException
 import java.net.URI
+import java.util.logging.Level
 import java.util.logging.Logger
 import javax.inject.Inject
 import javax.ws.rs.*
@@ -45,8 +47,13 @@ class GoalResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    fun createGoal(goal: Goal): Response {
+    fun createGoal(goalDTO: GoalDTO): Response {
         return try {
+            val goal = goalDTO.toDomain()
+
+            logger.log(Level.WARNING, "GoalDTO $goalDTO")
+            logger.log(Level.WARNING, "Goal Domain $goal")
+
             Goal.validate(goal)
             goalRepository.persist(goal)
             Response.created(URI.create("/goals/${goal.id}")).entity(goal).build()

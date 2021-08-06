@@ -1,7 +1,6 @@
 package ca.upperapps.api
 
 import ca.upperapps.api.dto.GoalDTO
-import ca.upperapps.domain.Criteria
 import ca.upperapps.domain.GoalRepository
 import ca.upperapps.domain.Option
 import ca.upperapps.domain.errorhandling.ErrorHandlerUtils
@@ -80,21 +79,6 @@ class GoalResource {
     @Path("/{goalId}/criteria")
     fun listAllCriteria(@PathParam("goalId") goalId: String): Response = Response.ok().build()
 
-    @POST
-    @Path("/{goalId}/criteria")
-    fun saveCriteria(criteria: List<Criteria>): Response {
-        // TODO Implement this method
-
-        return Response.ok().build()
-    }
-
-    @PUT
-    @Path("/{goalId}/criteria")
-    fun updateCriteria(updatedCriteria: List<Criteria>): Response {
-
-        // TODO Implement this method
-        return Response.ok().build()
-    }
 
     @DELETE
     @Path("/{goalId}/criteria/{criteriaId}")

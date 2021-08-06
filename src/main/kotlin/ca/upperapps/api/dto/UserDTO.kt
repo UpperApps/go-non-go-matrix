@@ -8,7 +8,7 @@ import org.bson.types.ObjectId
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class UserDTO (
-    val id: ObjectId? = null,
+    val id: ObjectId?,
     @JsonProperty("first-name") val firstName: String,
     @JsonProperty("last-name") val lastName: String,
     val username: String,
@@ -29,6 +29,6 @@ data class UserDTO (
     }
 
     fun toDomain(): User {
-        return User(id, firstName, lastName, username, email, password)
+        return User(id ?: ObjectId(), firstName, lastName, username, email, password)
     }
 }

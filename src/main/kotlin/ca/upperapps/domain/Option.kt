@@ -8,7 +8,6 @@ data class Option(
     val id: ObjectId? = ObjectId(),
     val name: String,
     val description: String? = null,
-    var optionScore: Map<Criteria, Int>? = null
 ) {
     init {
         validate(this) {

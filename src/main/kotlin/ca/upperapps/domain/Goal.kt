@@ -12,8 +12,9 @@ import org.valiktor.functions.isNotBlank
 import org.valiktor.validate
 
 @MongoEntity(collection = "goals")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class Goal @BsonCreator constructor(
-    @BsonId var id: ObjectId? = null,
+    @BsonId var id: ObjectId,
     @BsonProperty("goal") val goal: String,
     @BsonProperty("user") val user: User,
     @BsonProperty("description") val description: String? = null,

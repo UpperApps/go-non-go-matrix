@@ -11,7 +11,6 @@ import java.net.URI
 import java.util.logging.Logger
 import javax.inject.Inject
 import javax.ws.rs.*
-import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
 @Path("/goals")
@@ -25,27 +24,25 @@ class GoalResource {
     lateinit var goalRepository: GoalRepository
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    fun listAll(): Response = Response.ok(goalRepository.listAll()).build()
+    fun listAll(): Response {
+        val goals = goalRepository.listAll()
+        return Response.ok(goals.map { goal -> GoalDTO.fromDomain(goal) }).build()
+    }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
     fun getGoal(@PathParam("id") id: String): Response {
-        try {
+        return try {
             val goal = goalRepository.findById(ObjectId(id))
-            if (goal != null) {
-                return Response.ok(goal).build()
-            }
+
+            if (goal != null) Response.ok(goal).build()
+            else Response.status(Response.Status.NOT_FOUND).entity("Goal not found with id $id").build()
         } catch (e: IllegalArgumentException) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid id format $id").build()
+             Response.status(Response.Status.BAD_REQUEST).entity("Invalid id format $id").build()
         }
-        return Response.status(Response.Status.NOT_FOUND).entity("Goal not found for id $id").build()
     }
 
     @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     fun createGoal(goalDTO: GoalDTO): Response {
         return try {
             val goal = goalDTO.toDomain()
@@ -59,8 +56,6 @@ class GoalResource {
     }
 
     @PUT
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     fun updateGoal(updatedGoalDTO: GoalDTO): Response {
         return try {
             val updatedGoal = updatedGoalDTO.toDomain()
@@ -83,13 +78,10 @@ class GoalResource {
     // TODO Implement this method
     @GET
     @Path("/{goalId}/criteria")
-    @Produces(MediaType.APPLICATION_JSON)
     fun listAllCriteria(@PathParam("goalId") goalId: String): Response = Response.ok().build()
 
     @POST
     @Path("/{goalId}/criteria")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     fun saveCriteria(criteria: List<Criteria>): Response {
         // TODO Implement this method
 
@@ -98,8 +90,6 @@ class GoalResource {
 
     @PUT
     @Path("/{goalId}/criteria")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     fun updateCriteria(updatedCriteria: List<Criteria>): Response {
 
         // TODO Implement this method
@@ -117,13 +107,10 @@ class GoalResource {
     // TODO Implement this method
     @GET
     @Path("/{goalId}/options")
-    @Produces(MediaType.APPLICATION_JSON)
     fun listAllOptions(@PathParam("goalId") goalId: String): Response = Response.ok().build()
 
     @POST
     @Path("/{goalId}/options")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     fun saveOptions(option: List<Option>): Response {
         // TODO Implement this method
 
@@ -132,8 +119,6 @@ class GoalResource {
 
     @PUT
     @Path("/{goalId}/options")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     fun updateOptions(updatedOption: List<Option>): Response {
 
         // TODO Implement this method

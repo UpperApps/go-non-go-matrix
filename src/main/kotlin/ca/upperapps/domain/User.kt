@@ -1,8 +1,5 @@
 package ca.upperapps.domain
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonInclude.Include
-import com.fasterxml.jackson.annotation.JsonProperty
 import io.quarkus.mongodb.panache.common.MongoEntity
 import io.quarkus.mongodb.panache.kotlin.PanacheMongoEntityBase
 import org.bson.codecs.pojo.annotations.BsonCreator

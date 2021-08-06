@@ -1,12 +1,13 @@
 package ca.upperapps.api.dto
 
 import ca.upperapps.domain.User
+import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.bson.types.ObjectId
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class UserDTO(
+data class UserDTO (
     val id: ObjectId? = null,
     @JsonProperty("first-name") val firstName: String,
     @JsonProperty("last-name") val lastName: String,

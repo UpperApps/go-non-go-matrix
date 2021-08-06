@@ -1,9 +1,11 @@
 package ca.upperapps.api.dto
 
 import ca.upperapps.domain.User
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.bson.types.ObjectId
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class UserDTO(
     val id: ObjectId? = null,
     @JsonProperty("first-name") val firstName: String,
@@ -12,6 +14,19 @@ data class UserDTO(
     val email: String,
     val password: String? = null
 ) {
+    companion object {
+        fun fromDomain(user: User): UserDTO {
+            return UserDTO(
+                user.id,
+                user.firstName,
+                user.lastName,
+                user.username,
+                user.email,
+                user.password
+            )
+        }
+    }
+
     fun toDomain(): User {
         return User(id, firstName, lastName, username, email, password)
     }

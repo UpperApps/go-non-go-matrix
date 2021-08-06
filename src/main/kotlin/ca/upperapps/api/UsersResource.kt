@@ -4,6 +4,7 @@ import ca.upperapps.api.dto.UserDTO
 import ca.upperapps.domain.User
 import ca.upperapps.domain.UserRepository
 import ca.upperapps.domain.errorhandling.ErrorHandlerUtils
+import jdk.jshell.Snippet
 import org.bson.types.ObjectId
 import org.valiktor.ConstraintViolationException
 import java.net.URI
@@ -25,21 +26,21 @@ class UsersResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    fun listAll(): Response = Response.ok(userRepository.listAll()).build()
+    fun listAll(): Response = Response.ok(userRepository.listAll().map { user -> UserDTO.fromDomain(user) }).build()
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
     fun getUser(@PathParam("id") id: String): Response {
-        try {
+        return try {
             val user = userRepository.findById(ObjectId(id))
-            if (user != null) {
-                return Response.ok(user).build()
-            }
+
+            if (user != null) Response.ok(UserDTO.fromDomain(user)).build()
+            else Response.status(Response.Status.NOT_FOUND).entity("User not found for id $id").build()
+
         } catch (e: IllegalArgumentException) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid id format $id").build()
+            Response.status(Response.Status.BAD_REQUEST).entity("Invalid id format $id").build()
         }
-        return Response.status(Response.Status.NOT_FOUND).entity("User not found for id $id").build()
     }
 
     @POST
@@ -54,22 +55,25 @@ class UsersResource {
                 .entity(ErrorHandlerUtils.getValidationMessage(e))
                 .build()
         } catch (e: Exception) {
-            logger.log(Level.WARNING, e.stackTraceToString())
             return Response.noContent().build()
+        } catch (e: IllegalArgumentException) {
+            Response.status(Response.Status.BAD_REQUEST).entity(e.message).build()
         }
     }
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    fun updateUser(updatedUser: User): Response {
+    fun updateUser(updatedUserDTO: UserDTO): Response {
         return try {
-            userRepository.update(updatedUser)
-            Response.created(URI.create("/users/${updatedUser.id}")).entity(updatedUser).build()
+            userRepository.update(updatedUserDTO.toDomain())
+            Response.created(URI.create("/users/${updatedUserDTO.id}")).entity(updatedUserDTO).build()
         } catch (e: ConstraintViolationException) {
             Response.status(Response.Status.BAD_REQUEST)
                 .entity(ErrorHandlerUtils.getValidationMessage(e))
                 .build()
+        } catch (e: IllegalArgumentException) {
+            Response.status(Response.Status.BAD_REQUEST).entity(e.message).build()
         }
     }
 

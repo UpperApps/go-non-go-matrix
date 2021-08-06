@@ -16,14 +16,13 @@ import org.valiktor.validate
 
 
 @MongoEntity(collection = "users")
-@JsonInclude(Include.NON_NULL)
 data class User @BsonCreator constructor(
     @BsonId val id: ObjectId? = null,
-    @JsonProperty("first-name") @BsonProperty("firstName") val firstName: String,
-    @JsonProperty("last-name") @BsonProperty("lastName") val lastName: String,
+    @BsonProperty("firstName") val firstName: String,
+    @BsonProperty("lastName") val lastName: String,
     @BsonProperty("username") val username: String,
     @BsonProperty("email") val email: String,
-    @BsonProperty("password") val password: String? = null
+    @BsonProperty("password") var password: String? = null
 ) : PanacheMongoEntityBase() {
     init {
         validate(this) {

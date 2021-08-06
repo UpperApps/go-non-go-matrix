@@ -1,13 +1,9 @@
 package ca.upperapps.domain
 
-import io.quarkus.mongodb.panache.common.MongoEntity
-import io.quarkus.mongodb.panache.kotlin.PanacheMongoCompanion
-import io.quarkus.mongodb.panache.kotlin.PanacheMongoEntity
+import org.bson.types.ObjectId
 
-@MongoEntity()
-class CriteriaPair: PanacheMongoEntity() {
-    companion object: PanacheMongoCompanion<CriteriaPair>
-
-    lateinit var pair: Pair<Criteria, Criteria>
+data class CriteriaPair(
+    val id: ObjectId = ObjectId(),
+    val pair: Pair<Criteria, Criteria>,
     var score: Int = 0
-}
+)

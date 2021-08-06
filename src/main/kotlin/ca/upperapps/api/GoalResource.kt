@@ -2,14 +2,12 @@ package ca.upperapps.api
 
 import ca.upperapps.api.dto.GoalDTO
 import ca.upperapps.domain.Criteria
-import ca.upperapps.domain.Goal
 import ca.upperapps.domain.GoalRepository
 import ca.upperapps.domain.Option
 import ca.upperapps.domain.errorhandling.ErrorHandlerUtils
 import org.bson.types.ObjectId
 import org.valiktor.ConstraintViolationException
 import java.net.URI
-import java.util.logging.Level
 import java.util.logging.Logger
 import javax.inject.Inject
 import javax.ws.rs.*
@@ -23,7 +21,8 @@ class GoalResource {
         private val logger: Logger = Logger.getLogger(javaClass.enclosingClass.name)
     }
 
-    @Inject lateinit var goalRepository: GoalRepository
+    @Inject
+    lateinit var goalRepository: GoalRepository
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -50,11 +49,6 @@ class GoalResource {
     fun createGoal(goalDTO: GoalDTO): Response {
         return try {
             val goal = goalDTO.toDomain()
-
-            logger.log(Level.WARNING, "GoalDTO $goalDTO")
-            logger.log(Level.WARNING, "Goal Domain $goal")
-
-            Goal.validate(goal)
             goalRepository.persist(goal)
             Response.created(URI.create("/goals/${goal.id}")).entity(goal).build()
         } catch (e: ConstraintViolationException) {
@@ -67,10 +61,10 @@ class GoalResource {
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    fun updateGoal(updatedGoal: Goal): Response {
+    fun updateGoal(updatedGoalDTO: GoalDTO): Response {
         return try {
-
-
+            val updatedGoal = updatedGoalDTO.toDomain()
+            goalRepository.update(updatedGoal)
             Response.created(URI.create("/goals/${updatedGoal.id}")).entity(updatedGoal).build()
         } catch (e: ConstraintViolationException) {
             Response.status(Response.Status.BAD_REQUEST)

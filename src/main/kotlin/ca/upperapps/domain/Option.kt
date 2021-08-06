@@ -1,11 +1,11 @@
 package ca.upperapps.domain
 
+import org.bson.types.ObjectId
 import org.valiktor.functions.hasSize
 import org.valiktor.validate
-import java.util.*
 
 data class Option(
-    val id: String = UUID.randomUUID().toString(),
+    val id: ObjectId? = ObjectId(),
     val name: String,
     val description: String? = null,
     var optionScore: Map<Criteria, Int>? = null

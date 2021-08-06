@@ -1,6 +1,6 @@
 package ca.upperapps.domain
 
-// TODO Finish implementation
-class Scenario {
+import org.bson.types.ObjectId
 
-}
+// TODO Finish implementation
+data class Scenario(val id: ObjectId? = ObjectId())

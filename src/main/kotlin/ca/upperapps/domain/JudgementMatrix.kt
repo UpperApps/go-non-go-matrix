@@ -1,6 +1,6 @@
 package ca.upperapps.domain
 
-// TODO Finish implementation
-class JudgementMatrix {
+import org.bson.types.ObjectId
 
-}
+// TODO Finish implementation
+data class JudgementMatrix(val id: ObjectId? = ObjectId())

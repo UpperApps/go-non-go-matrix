@@ -1,13 +1,19 @@
 package ca.upperapps.domain
 
+import com.fasterxml.jackson.annotation.JsonInclude
+import org.bson.codecs.pojo.annotations.BsonCreator
+import org.bson.codecs.pojo.annotations.BsonId
+import org.bson.codecs.pojo.annotations.BsonProperty
 import org.bson.types.ObjectId
 import org.valiktor.functions.hasSize
 import org.valiktor.validate
 
-data class Option(
-    val id: ObjectId? = ObjectId(),
-    val name: String,
-    val description: String? = null,
+@JsonInclude(JsonInclude.Include.NON_NULL)
+data class Option @BsonCreator constructor(
+    @BsonId val id: ObjectId,
+    @BsonProperty("name") val name: String,
+    @BsonProperty("description") val description: String?,
+    @BsonProperty("score") val score: Map<String, Int>?
 ) {
     init {
         validate(this) {

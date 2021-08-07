@@ -2,7 +2,6 @@ package ca.upperapps.api.dto
 
 import ca.upperapps.domain.Goal
 import ca.upperapps.domain.JudgementMatrix
-import ca.upperapps.domain.Option
 import ca.upperapps.domain.Scenario
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -15,7 +14,7 @@ data class GoalDTO(
     val user: UserDTO,
     val description: String? = null,
     val criteria: List<CriteriaDTO>? = null,
-    val options: List<Option>? = null,
+    val options: List<OptionDTO>? = null,
     @JsonProperty("judgement-matrix") val judgementMatrix: JudgementMatrix? = null,
     val scenario: List<Scenario>? = null
 ) {
@@ -28,7 +27,7 @@ data class GoalDTO(
                 UserDTO.fromDomain(goal.user),
                 goal.description,
                 goal.criteria?.map { criteria ->  CriteriaDTO.fromDomain(criteria) },
-                goal.options,
+                goal.options?.map { option -> OptionDTO.fromDomain(option) },
                 goal.judgementMatrix,
                 goal.scenario
             )
@@ -42,7 +41,7 @@ data class GoalDTO(
             user = user.toDomain(),
             description = description,
             criteria = criteria?.map { criteriaDTO -> criteriaDTO.toDomain() },
-            options = options,
+            options = options?.map { optionDTO -> optionDTO.toDomain()  },
             judgementMatrix = judgementMatrix,
             scenario = scenario
         )

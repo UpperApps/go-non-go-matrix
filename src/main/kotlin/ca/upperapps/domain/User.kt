@@ -1,6 +1,5 @@
 package ca.upperapps.domain
 
-import com.fasterxml.jackson.annotation.JsonInclude
 import io.quarkus.mongodb.panache.common.MongoEntity
 import io.quarkus.mongodb.panache.kotlin.PanacheMongoEntityBase
 import org.bson.codecs.pojo.annotations.BsonCreator
@@ -14,7 +13,6 @@ import org.valiktor.validate
 
 
 @MongoEntity(collection = "users")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 data class User @BsonCreator constructor(
     @BsonId val id: ObjectId,
     @BsonProperty("firstName") val firstName: String,

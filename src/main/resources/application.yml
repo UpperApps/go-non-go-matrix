@@ -4,3 +4,7 @@ quarkus:
     database: go-non-go-matrix
   http:
     root-path: /go-non-go-matrix
+  swagger-ui:
+    enable: true
+    path: /q/swagger-ui
+    theme: flattop

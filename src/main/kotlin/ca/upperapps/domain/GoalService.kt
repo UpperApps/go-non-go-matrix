@@ -1,0 +1,44 @@
+package ca.upperapps.domain
+
+import java.util.logging.Level
+import java.util.logging.Logger
+import javax.enterprise.context.ApplicationScoped
+import javax.inject.Inject
+
+@ApplicationScoped
+class GoalService {
+    companion object {
+        @Suppress("JAVA_CLASS_ON_COMPANION")
+        private val logger: Logger = Logger.getLogger(javaClass.enclosingClass.name)
+    }
+
+    @Inject
+    private lateinit var goalRepository: GoalRepository
+
+    fun save(goal: Goal): Goal {
+        try {
+            val goalToPersist = goal.copy(description = null, criteria = null, options = null, judgementMatrix = null, scenario = null)
+            goalRepository.persist(goalToPersist)
+            return goalRepository.findById(goalToPersist.id)!!
+        } catch (e: NullPointerException) {
+            logger.log(Level.SEVERE, "Goal persisted not found: ${e.message}")
+            // TODO Modify it to throw a custom Exception
+            throw e
+        } catch (e: Exception) {
+            logger.log(Level.SEVERE, "The goal couldn't be persisted: ${e.message}")
+            throw e
+        }
+    }
+
+    fun updateGoalInfo(goalToUpdate: Goal): Goal {
+        try {
+            val goalToPersist = goalToUpdate.copy(goal = goalToUpdate.goal, user = goalToUpdate.user)
+            goalRepository.update(goalToPersist)
+            return goalRepository.findById(goalToPersist.id)!!
+        } catch (e: NullPointerException) {
+            logger.log(Level.SEVERE, "Error on updating goal with id ${goalToUpdate.id}")
+            // TODO Modify it to throw a custom Exception
+            throw e
+        }
+    }
+}

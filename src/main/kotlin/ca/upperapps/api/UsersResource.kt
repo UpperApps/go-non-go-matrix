@@ -4,6 +4,7 @@ import ca.upperapps.api.dto.UserDTO
 import ca.upperapps.domain.UserRepository
 import ca.upperapps.domain.exceptions.ErrorHandlerUtils
 import org.bson.types.ObjectId
+import org.eclipse.microprofile.openapi.annotations.tags.Tag
 import org.valiktor.ConstraintViolationException
 import java.net.URI
 import java.util.logging.Logger
@@ -13,6 +14,7 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
 @Path("/users")
+@Tag(name = "User Resource", description = "Resource responsible for user operations.")
 class UsersResource {
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")

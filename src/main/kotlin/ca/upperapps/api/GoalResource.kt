@@ -2,15 +2,15 @@ package ca.upperapps.api
 
 import ca.upperapps.api.dto.GoalDTO
 import ca.upperapps.domain.*
-import ca.upperapps.domain.exceptions.ErrorHandlerUtils
-import ca.upperapps.domain.exceptions.ExceptionHandler
 import ca.upperapps.domain.exceptions.EntityNotFoundException
+import ca.upperapps.domain.exceptions.ExceptionHandler
 import org.bson.types.ObjectId
 import org.eclipse.microprofile.openapi.annotations.Operation
 import org.eclipse.microprofile.openapi.annotations.media.Content
 import org.eclipse.microprofile.openapi.annotations.media.Schema
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
+import org.eclipse.microprofile.openapi.annotations.tags.Tag
 import org.valiktor.ConstraintViolationException
 import java.net.URI
 import java.util.logging.Logger
@@ -19,6 +19,7 @@ import javax.ws.rs.*
 import javax.ws.rs.core.Response
 
 @Path("/goals")
+@Tag(name = "Goal Resource", description = "Resource responsible for Goals operations.")
 class GoalResource {
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -32,6 +33,35 @@ class GoalResource {
     private lateinit var goalService: GoalService
 
     @GET
+    @Operation(
+        summary = "Get goals list",
+        description = "Get a list of all goals available"
+    )
+    @APIResponses(
+        value = [
+            APIResponse(
+                responseCode = "200",
+                description = "Success",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = Goal::class))]
+            ),
+            APIResponse(
+                responseCode = "404",
+                description = "Goal not found for a given ID",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class)
+                )]
+            ),
+            APIResponse(
+                responseCode = "400",
+                description = "ID format is not valid",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class)
+                )]
+            )
+        ]
+    )
     fun listAll(): Response {
         val goals = goalRepository.listAll()
         return Response.ok(goals.map { goal -> GoalDTO.fromDomain(goal) }).build()
@@ -53,12 +83,18 @@ class GoalResource {
             APIResponse(
                 responseCode = "404",
                 description = "Goal not found for a given ID",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class))]
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class)
+                )]
             ),
             APIResponse(
                 responseCode = "400",
                 description = "ID format is not valid",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class))]
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class)
+                )]
             )
         ]
     )
@@ -70,32 +106,23 @@ class GoalResource {
             if (goal != null) Response.ok(goal).build()
             else throw EntityNotFoundException("Goal not found for id $id")
         } catch (e: IllegalArgumentException) {
-            throw BadRequestException("Invalid id format $id")
+            throw IllegalArgumentException("Invalid id format $id")
         }
     }
 
     @POST
+    @Throws(ConstraintViolationException::class)
     fun createGoal(goalDTO: GoalDTO): Response {
-        return try {
-            val goalSaved = goalService.save(goalDTO.toDomain())
-            Response.created(URI.create("/goals/${goalSaved.id}")).entity(GoalDTO.fromDomain(goalSaved)).build()
-        } catch (e: ConstraintViolationException) {
-            Response.status(Response.Status.BAD_REQUEST)
-                .entity(ErrorHandlerUtils.getValidationMessage(e))
-                .build()
-        }
+        val goalSaved = goalService.save(goalDTO.toDomain())
+        return Response.created(URI.create("/goals/${goalSaved.id}")).entity(GoalDTO.fromDomain(goalSaved)).build()
+
     }
 
     @PUT
+    @Throws(ConstraintViolationException::class)
     fun updateGoal(updatedGoalDTO: GoalDTO): Response {
-        return try {
-            val updatedGoal = goalService.updateGoalInfo(updatedGoalDTO.toDomain())
-            Response.created(URI.create("/goals/${updatedGoal.id}")).entity(GoalDTO.fromDomain(updatedGoal)).build()
-        } catch (e: ConstraintViolationException) {
-            Response.status(Response.Status.BAD_REQUEST)
-                .entity(ErrorHandlerUtils.getValidationMessage(e))
-                .build()
-        }
+        val updatedGoal = goalService.updateGoalInfo(updatedGoalDTO.toDomain())
+        return Response.created(URI.create("/goals/${updatedGoal.id}")).entity(GoalDTO.fromDomain(updatedGoal)).build()
     }
 
     @DELETE

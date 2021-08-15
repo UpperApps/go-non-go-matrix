@@ -1,5 +1,6 @@
 package ca.upperapps.domain
 
+import ca.upperapps.domain.exceptions.EntityNotFoundException
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.enterprise.context.ApplicationScoped
@@ -21,12 +22,13 @@ class GoalService {
             goalRepository.persist(goalToPersist)
             return goalRepository.findById(goalToPersist.id)!!
         } catch (e: NullPointerException) {
-            logger.log(Level.SEVERE, "Goal persisted not found: ${e.message}")
-            // TODO Modify it to throw a custom Exception
-            throw e
+            val errorMessage = "Goal persisted not found: ${e.message}"
+            logger.log(Level.SEVERE, errorMessage)
+            throw EntityNotFoundException(errorMessage)
         } catch (e: Exception) {
-            logger.log(Level.SEVERE, "The goal couldn't be persisted: ${e.message}")
-            throw e
+            val errorMessage = "The goal couldn't be persisted: ${e.message}"
+            logger.log(Level.SEVERE, errorMessage)
+            throw Exception(errorMessage)
         }
     }
 
@@ -36,9 +38,9 @@ class GoalService {
             goalRepository.update(goalToPersist)
             return goalRepository.findById(goalToPersist.id)!!
         } catch (e: NullPointerException) {
-            logger.log(Level.SEVERE, "Error on updating goal with id ${goalToUpdate.id}")
-            // TODO Modify it to throw a custom Exception
-            throw e
+            val errorMessage = "Error on updating goal with id ${goalToUpdate.id}"
+            logger.log(Level.SEVERE, errorMessage)
+            throw EntityNotFoundException(errorMessage)
         }
     }
 

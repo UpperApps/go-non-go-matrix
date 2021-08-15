@@ -8,9 +8,9 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag
 import javax.ws.rs.core.Application
 
 @OpenAPIDefinition(
-    tags = [Tag(name = "Go-Non-Go Matrix", description = "API created as a backend for the go-non-go matrix application.")],
+    tags = [Tag(name = "Go-Non-Go Matrix API", description = "API created as a backend for the go-non-go matrix application.")],
     info = Info(
-        title = "Go-Non-Go API with Quarkus",
+        title = "Go-Non-Go Matrix API with Quarkus",
         version = "0.0.1",
         contact = Contact(
             name = "Rodrigo Melo",
@@ -19,7 +19,7 @@ import javax.ws.rs.core.Application
         ),
         license = License(
             name = "MIT",
-            url = "https://opensource.org/licenses/MIT"
+            url = "https://opensource.org/licenses/MIT" // TODO Change it for the final licence before make it public.
         )
     )
 )

@@ -1,5 +1,6 @@
 package ca.upperapps.domain.exceptions
 
+import org.valiktor.ConstraintViolationException
 import javax.ws.rs.BadRequestException
 import javax.ws.rs.core.Response
 import javax.ws.rs.ext.ExceptionMapper
@@ -14,6 +15,12 @@ class ExceptionHandler : ExceptionMapper<Exception> {
                 .build()
             is BadRequestException -> Response.status(Response.Status.BAD_REQUEST)
                 .entity(ErrorResponseBody(exception.message, BadRequestException::class.simpleName))
+                .build()
+            is ConstraintViolationException -> Response.status(Response.Status.BAD_REQUEST)
+                .entity(ErrorHandlerUtils.getValidationMessage(exception))
+                .build()
+            is IllegalArgumentException -> Response.status(Response.Status.BAD_REQUEST)
+                .entity(exception)
                 .build()
             else -> Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(ErrorResponseBody("Something unexpected happened. Try again"))

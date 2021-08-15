@@ -1,5 +1,6 @@
 quarkus:
   mongodb:
+    # TODO Create a custom config by environment
     connection-string: mongodb://root:123456@localhost:27017
     database: go-non-go-matrix
   http:
@@ -8,3 +9,4 @@ quarkus:
     enable: true
     path: /q/swagger-ui
     theme: flattop
+    title: Go-Non-Go Matrix API

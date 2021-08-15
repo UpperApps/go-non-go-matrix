@@ -1,6 +1,6 @@
 package ca.upperapps.api
 
-import ca.upperapps.api.dto.GoalDTO
+import ca.upperapps.api.dto.out.GoalDTO
 import ca.upperapps.domain.*
 import ca.upperapps.domain.exceptions.EntityNotFoundException
 import ca.upperapps.domain.exceptions.ExceptionHandler
@@ -18,7 +18,7 @@ import javax.inject.Inject
 import javax.ws.rs.*
 import javax.ws.rs.core.Response
 
-@Path("/goals")
+@Path("/users/{userId}/goals")
 @Tag(name = "Goal Resource", description = "Resource responsible for Goals operations.")
 class GoalResource {
     companion object {
@@ -31,6 +31,9 @@ class GoalResource {
 
     @Inject
     private lateinit var goalService: GoalService
+
+    @Inject
+    private lateinit var userRepository: UserRepository
 
     @GET
     @Operation(
@@ -62,13 +65,13 @@ class GoalResource {
             )
         ]
     )
-    fun listAll(): Response {
-        val goals = goalRepository.listAll()
+    fun listAll(@PathParam("userId") userId: String): Response {
+        val goals = goalRepository.listAllUserGoals(userId)
         return Response.ok(goals.map { goal -> GoalDTO.fromDomain(goal) }).build()
     }
 
     @GET
-    @Path("/{id}")
+    @Path("/{goalId}")
     @Operation(
         summary = "Get goal by ID",
         description = "Get a user goal by goal ID."
@@ -99,30 +102,46 @@ class GoalResource {
         ]
     )
     @Throws(EntityNotFoundException::class)
-    fun getGoal(@PathParam("id") id: String): Response {
+    fun getGoal(@PathParam("goalId") goalId: String): Response {
         return try {
-            val goal = goalRepository.findById(ObjectId(id))
+            val goal = goalRepository.findById(ObjectId(goalId))
 
-            if (goal != null) Response.ok(goal).build()
-            else throw EntityNotFoundException("Goal not found for id $id")
+            if (goal != null) Response.ok(GoalDTO.fromDomain(goal)).build()
+            else throw EntityNotFoundException("Goal not found for id $goalId")
         } catch (e: IllegalArgumentException) {
-            throw IllegalArgumentException("Invalid id format $id")
+            throw IllegalArgumentException("Invalid id format $goalId")
         }
     }
 
     @POST
     @Throws(ConstraintViolationException::class)
-    fun createGoal(goalDTO: GoalDTO): Response {
-        val goalSaved = goalService.save(goalDTO.toDomain())
-        return Response.created(URI.create("/goals/${goalSaved.id}")).entity(GoalDTO.fromDomain(goalSaved)).build()
+    fun createGoal(@PathParam("userId") userId: String, goalDTO: ca.upperapps.api.dto.`in`.GoalDTO): Response? {
+        val user = userRepository.findById(ObjectId(userId))
 
+        if (user != null) {
+            val goalSaved = goalService.save(goalDTO.toDomain(user))
+            return Response.created(URI.create("/goals/${goalSaved.id}")).entity(GoalDTO.fromDomain(goalSaved)).build()
+        } else {
+            throw throw EntityNotFoundException("Goal not created. User not found for id $userId")
+        }
     }
 
     @PUT
     @Throws(ConstraintViolationException::class)
-    fun updateGoal(updatedGoalDTO: GoalDTO): Response {
-        val updatedGoal = goalService.updateGoalInfo(updatedGoalDTO.toDomain())
-        return Response.created(URI.create("/goals/${updatedGoal.id}")).entity(GoalDTO.fromDomain(updatedGoal)).build()
+    @Path("/{goalId}")
+    fun updateGoal(
+        @PathParam("userId") userId: String,
+        @PathParam("goalId") goalId: String,
+        updatedGoalDTO: ca.upperapps.api.dto.`in`.GoalDTO
+    ): Response {
+        val user = userRepository.findById(ObjectId(userId))
+
+        if (user != null) {
+            val updatedGoal = goalService.updateGoalInfo(updatedGoalDTO.toDomain(user, goalId))
+            return Response.created(URI.create("/goals/${updatedGoal.id}")).entity(GoalDTO.fromDomain(updatedGoal)).build()
+        } else {
+            throw throw EntityNotFoundException("Goal not created. User not found for id $userId")
+        }
     }
 
     @DELETE

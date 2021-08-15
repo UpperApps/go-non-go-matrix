@@ -1,5 +1,8 @@
-package ca.upperapps.api.dto
+package ca.upperapps.api.dto.out
 
+import ca.upperapps.api.dto.CriteriaDTO
+import ca.upperapps.api.dto.OptionDTO
+import ca.upperapps.api.dto.UserDTO
 import ca.upperapps.domain.Goal
 import ca.upperapps.domain.JudgementMatrix
 import ca.upperapps.domain.Scenario
@@ -47,4 +50,3 @@ data class GoalDTO(
         )
     }
 }
-

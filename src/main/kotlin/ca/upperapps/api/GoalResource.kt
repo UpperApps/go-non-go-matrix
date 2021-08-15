@@ -6,6 +6,7 @@ import ca.upperapps.domain.exceptions.EntityNotFoundException
 import ca.upperapps.domain.exceptions.ExceptionHandler
 import org.bson.types.ObjectId
 import org.eclipse.microprofile.openapi.annotations.Operation
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType
 import org.eclipse.microprofile.openapi.annotations.media.Content
 import org.eclipse.microprofile.openapi.annotations.media.Schema
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
@@ -16,6 +17,7 @@ import java.net.URI
 import java.util.logging.Logger
 import javax.inject.Inject
 import javax.ws.rs.*
+import javax.ws.rs.core.Link
 import javax.ws.rs.core.Response
 
 @Path("/users/{userId}/goals")
@@ -37,15 +39,15 @@ class GoalResource {
 
     @GET
     @Operation(
-        summary = "Get goals list",
-        description = "Get a list of all goals available"
+        summary = "Get user goals list",
+        description = "Get a list of all goals available for a user"
     )
     @APIResponses(
         value = [
             APIResponse(
                 responseCode = "200",
                 description = "Success",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = Goal::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(type = SchemaType.ARRAY,implementation = Goal::class))]
             ),
             APIResponse(
                 responseCode = "404",
@@ -114,6 +116,35 @@ class GoalResource {
     }
 
     @POST
+    @Operation(
+        summary = "Creates a new user's goal",
+        description = "Creates a new user's goal"
+    )
+    @APIResponses(
+        value = [
+            APIResponse(
+                responseCode = "201",
+                description = "Goal created",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = Goal::class))]
+            ),
+            APIResponse(
+                responseCode = "404",
+                description = "User not found when creating the goal",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class)
+                )]
+            ),
+            APIResponse(
+                responseCode = "400",
+                description = "Invalid data",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class)
+                )]
+            )
+        ]
+    )
     @Throws(ConstraintViolationException::class)
     fun createGoal(@PathParam("userId") userId: String, goalDTO: ca.upperapps.api.dto.`in`.GoalDTO): Response? {
         val user = userRepository.findById(ObjectId(userId))
@@ -127,8 +158,38 @@ class GoalResource {
     }
 
     @PUT
-    @Throws(ConstraintViolationException::class)
     @Path("/{goalId}")
+    @POST
+    @Operation(
+        summary = "Updates a user's goal",
+        description = "Updates a user's goal"
+    )
+    @APIResponses(
+        value = [
+            APIResponse(
+                responseCode = "201",
+                description = "Goal updated",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = Goal::class))]
+            ),
+            APIResponse(
+                responseCode = "404",
+                description = "User not found when updating the given goal",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class)
+                )]
+            ),
+            APIResponse(
+                responseCode = "400",
+                description = "Invalid data",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class)
+                )]
+            )
+        ]
+    )
+    @Throws(ConstraintViolationException::class)
     fun updateGoal(
         @PathParam("userId") userId: String,
         @PathParam("goalId") goalId: String,
@@ -140,12 +201,25 @@ class GoalResource {
             val updatedGoal = goalService.updateGoalInfo(updatedGoalDTO.toDomain(user, goalId))
             return Response.created(URI.create("/goals/${updatedGoal.id}")).entity(GoalDTO.fromDomain(updatedGoal)).build()
         } else {
-            throw throw EntityNotFoundException("Goal not created. User not found for id $userId")
+            throw throw EntityNotFoundException("Goal not updated. User not found for id $userId")
         }
     }
 
     @DELETE
     @Path("/{id}")
+    @Operation(
+        summary = "Updates a user's goal",
+        description = "Updates a user's goal"
+    )
+    @APIResponses(
+        value = [
+            APIResponse(
+                responseCode = "204",
+                description = "User's goal deleted",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = Goal::class))]
+            )
+        ]
+    )
     fun deleteGoal(@PathParam("id") id: String): Response {
         goalRepository.deleteById(ObjectId(id))
         return Response.noContent().build()

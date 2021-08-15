@@ -2,7 +2,7 @@ package ca.upperapps.api
 
 import ca.upperapps.api.dto.UserDTO
 import ca.upperapps.domain.UserRepository
-import ca.upperapps.domain.errorhandling.ErrorHandlerUtils
+import ca.upperapps.domain.exceptions.ErrorHandlerUtils
 import org.bson.types.ObjectId
 import org.valiktor.ConstraintViolationException
 import java.net.URI

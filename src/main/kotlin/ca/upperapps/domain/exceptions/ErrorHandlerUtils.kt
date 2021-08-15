@@ -1,4 +1,4 @@
-package ca.upperapps.domain.errorhandling
+package ca.upperapps.domain.exceptions
 
 import org.valiktor.ConstraintViolationException
 import org.valiktor.i18n.toMessage

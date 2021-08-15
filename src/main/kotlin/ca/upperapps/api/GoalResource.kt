@@ -1,11 +1,16 @@
 package ca.upperapps.api
 
 import ca.upperapps.api.dto.GoalDTO
-import ca.upperapps.domain.GoalRepository
-import ca.upperapps.domain.GoalService
-import ca.upperapps.domain.Option
-import ca.upperapps.domain.errorhandling.ErrorHandlerUtils
+import ca.upperapps.domain.*
+import ca.upperapps.domain.exceptions.ErrorHandlerUtils
+import ca.upperapps.domain.exceptions.ExceptionHandler
+import ca.upperapps.domain.exceptions.EntityNotFoundException
 import org.bson.types.ObjectId
+import org.eclipse.microprofile.openapi.annotations.Operation
+import org.eclipse.microprofile.openapi.annotations.media.Content
+import org.eclipse.microprofile.openapi.annotations.media.Schema
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
 import org.valiktor.ConstraintViolationException
 import java.net.URI
 import java.util.logging.Logger
@@ -20,8 +25,11 @@ class GoalResource {
         private val logger: Logger = Logger.getLogger(javaClass.enclosingClass.name)
     }
 
-    @Inject private lateinit var goalRepository: GoalRepository
-    @Inject private lateinit var goalService: GoalService
+    @Inject
+    private lateinit var goalRepository: GoalRepository
+
+    @Inject
+    private lateinit var goalService: GoalService
 
     @GET
     fun listAll(): Response {
@@ -31,14 +39,38 @@ class GoalResource {
 
     @GET
     @Path("/{id}")
+    @Operation(
+        summary = "Get goal by ID",
+        description = "Get a user goal by goal ID."
+    )
+    @APIResponses(
+        value = [
+            APIResponse(
+                responseCode = "200",
+                description = "Success",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = Goal::class))]
+            ),
+            APIResponse(
+                responseCode = "404",
+                description = "Goal not found for a given ID",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class))]
+            ),
+            APIResponse(
+                responseCode = "400",
+                description = "ID format is not valid",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class))]
+            )
+        ]
+    )
+    @Throws(EntityNotFoundException::class)
     fun getGoal(@PathParam("id") id: String): Response {
         return try {
             val goal = goalRepository.findById(ObjectId(id))
 
             if (goal != null) Response.ok(goal).build()
-            else Response.status(Response.Status.NOT_FOUND).entity("Goal not found with id $id").build()
+            else throw EntityNotFoundException("Goal not found for id $id")
         } catch (e: IllegalArgumentException) {
-             Response.status(Response.Status.BAD_REQUEST).entity("Invalid id format $id").build()
+            throw BadRequestException("Invalid id format $id")
         }
     }
 
@@ -76,7 +108,10 @@ class GoalResource {
     // TODO Implement this method
     @GET
     @Path("/{goalId}/criteria")
-    fun listAllCriteria(@PathParam("goalId") goalId: String): Response = Response.ok().build()
+    fun listAllCriteria(@PathParam("goalId") goalId: String): Response {
+        val criteriaList: List<Criteria> = goalService.getCriteria(goalId)
+        return Response.ok().build()
+    }
 
 
     @DELETE

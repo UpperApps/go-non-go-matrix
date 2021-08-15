@@ -41,4 +41,9 @@ class GoalService {
             throw e
         }
     }
+
+    fun getCriteria(goalId: String): List<Criteria> {
+
+        return listOf()
+    }
 }

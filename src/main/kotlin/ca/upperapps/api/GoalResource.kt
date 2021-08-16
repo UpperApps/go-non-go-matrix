@@ -12,6 +12,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
+import org.jboss.resteasy.util.NoContent
 import org.valiktor.ConstraintViolationException
 import java.net.URI
 import java.util.logging.Logger
@@ -39,31 +40,15 @@ class GoalResource {
 
     @GET
     @Operation(
-        summary = "Get user goals list",
-        description = "Get a list of all goals available for a user"
+        summary = "Get user's goals list",
+        description = "Get a list with all goals available for a user"
     )
     @APIResponses(
         value = [
             APIResponse(
                 responseCode = "200",
-                description = "Success",
-                content = [Content(mediaType = "application/json", schema = Schema(type = SchemaType.ARRAY,implementation = Goal::class))]
-            ),
-            APIResponse(
-                responseCode = "404",
-                description = "Goal not found for a given ID",
-                content = [Content(
-                    mediaType = "application/json",
-                    schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class)
-                )]
-            ),
-            APIResponse(
-                responseCode = "400",
-                description = "ID format is not valid",
-                content = [Content(
-                    mediaType = "application/json",
-                    schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class)
-                )]
+                description = "List of goals returned",
+                content = [Content(mediaType = "application/json", schema = Schema(type = SchemaType.ARRAY,implementation = GoalDTO::class))]
             )
         ]
     )
@@ -82,12 +67,12 @@ class GoalResource {
         value = [
             APIResponse(
                 responseCode = "200",
-                description = "Success",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = Goal::class))]
+                description = "Goal found for given id",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = GoalDTO::class))]
             ),
             APIResponse(
                 responseCode = "404",
-                description = "Goal not found for a given ID",
+                description = "Goal not found for a given id",
                 content = [Content(
                     mediaType = "application/json",
                     schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class)
@@ -95,7 +80,7 @@ class GoalResource {
             ),
             APIResponse(
                 responseCode = "400",
-                description = "ID format is not valid",
+                description = "Id format is not valid",
                 content = [Content(
                     mediaType = "application/json",
                     schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class)
@@ -117,15 +102,15 @@ class GoalResource {
 
     @POST
     @Operation(
-        summary = "Creates a new user's goal",
-        description = "Creates a new user's goal"
+        summary = "Create a new user's goal",
+        description = "Create a new user's goal"
     )
     @APIResponses(
         value = [
             APIResponse(
                 responseCode = "201",
                 description = "Goal created",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = Goal::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = GoalDTO::class))]
             ),
             APIResponse(
                 responseCode = "404",
@@ -161,15 +146,15 @@ class GoalResource {
     @Path("/{goalId}")
     @POST
     @Operation(
-        summary = "Updates a user's goal",
-        description = "Updates a user's goal"
+        summary = "Update a user's goal",
+        description = "Update a user's goal"
     )
     @APIResponses(
         value = [
             APIResponse(
                 responseCode = "201",
                 description = "Goal updated",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = Goal::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = GoalDTO::class))]
             ),
             APIResponse(
                 responseCode = "404",
@@ -208,15 +193,14 @@ class GoalResource {
     @DELETE
     @Path("/{id}")
     @Operation(
-        summary = "Updates a user's goal",
-        description = "Updates a user's goal"
+        summary = "Delete a user's goal",
+        description = "Delete a user's goal"
     )
     @APIResponses(
         value = [
             APIResponse(
                 responseCode = "204",
-                description = "User's goal deleted",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = Goal::class))]
+                description = "User's goal deleted"
             )
         ]
     )

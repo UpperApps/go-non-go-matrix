@@ -1,9 +1,19 @@
 package ca.upperapps.api
 
 import ca.upperapps.api.dto.UserDTO
+import ca.upperapps.domain.Goal
+import ca.upperapps.domain.User
 import ca.upperapps.domain.UserRepository
+import ca.upperapps.domain.exceptions.EntityNotFoundException
 import ca.upperapps.domain.exceptions.ErrorHandlerUtils
+import ca.upperapps.domain.exceptions.ExceptionHandler
 import org.bson.types.ObjectId
+import org.eclipse.microprofile.openapi.annotations.Operation
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType
+import org.eclipse.microprofile.openapi.annotations.media.Content
+import org.eclipse.microprofile.openapi.annotations.media.Schema
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
 import org.valiktor.ConstraintViolationException
 import java.net.URI
@@ -21,63 +31,146 @@ class UsersResource {
         private val logger: Logger = Logger.getLogger(javaClass.enclosingClass.name)
     }
 
-    @Inject lateinit var userRepository: UserRepository
+    @Inject
+    lateinit var userRepository: UserRepository
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(
+        summary = "Get users list",
+        description = "Get a list with all users"
+    )
+    @APIResponses(
+        value = [
+            APIResponse(
+                responseCode = "200",
+                description = "Success",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(type = SchemaType.ARRAY, implementation = UserDTO::class)
+                )]
+            )
+        ]
+    )
     fun listAll(): Response = Response.ok(userRepository.listAll().map { user -> UserDTO.fromDomain(user) }).build()
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
+    @Operation(
+        summary = "Get user",
+        description = "Get a user by id"
+    )
+    @APIResponses(
+        value = [
+            APIResponse(
+                responseCode = "200",
+                description = "User found",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(type = SchemaType.ARRAY, implementation = UserDTO::class)
+                )]
+            ),
+            APIResponse(
+                responseCode = "404",
+                description = "User not found for a given id",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class)
+                )]
+            ),
+            APIResponse(
+                responseCode = "400",
+                description = "Id format is not valid",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class)
+                )]
+            )
+        ]
+    )
+    @Throws(EntityNotFoundException::class)
     fun getUser(@PathParam("id") id: String): Response {
         return try {
             val user = userRepository.findById(ObjectId(id))
 
             if (user != null) Response.ok(UserDTO.fromDomain(user)).build()
-            else Response.status(Response.Status.NOT_FOUND).entity("User not found for id $id").build()
+            else throw EntityNotFoundException("User not found for id $id")
 
         } catch (e: IllegalArgumentException) {
-            Response.status(Response.Status.BAD_REQUEST).entity("Invalid id format $id").build()
+            throw java.lang.IllegalArgumentException("Invalid id format $id")
         }
     }
 
     @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(
+        summary = "Create user",
+        description = "Create a new user"
+    )
+    @APIResponses(
+        value = [
+            APIResponse(
+                responseCode = "201",
+                description = "User created successfully",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(type = SchemaType.ARRAY, implementation = UserDTO::class)
+                )]
+            ),
+            APIResponse(
+                responseCode = "400",
+                description = "ID format is not valid",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class)
+                )]
+            )
+        ]
+    )
     fun createUser(userDTO: UserDTO): Response {
-        return try {
-            val newUser = userDTO.toDomain()
-            userRepository.persist(newUser)
-            Response.created(URI.create("/users/${newUser.id}")).entity(newUser).build()
-        } catch (e: ConstraintViolationException) {
-            Response.status(Response.Status.BAD_REQUEST)
-                .entity(ErrorHandlerUtils.getValidationMessage(e))
-                .build()
-        } catch (e: Exception) {
-            return Response.noContent().build()
-        } catch (e: IllegalArgumentException) {
-            Response.status(Response.Status.BAD_REQUEST).entity(e.message).build()
-        }
+        val newUser = userDTO.toDomain()
+        userRepository.persist(newUser)
+        return Response.created(URI.create("/users/${newUser.id}")).entity(newUser).build()
     }
 
     @PUT
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(
+        summary = "Update user",
+        description = "Updates user info"
+    )
+    @APIResponses(
+        value = [
+            APIResponse(
+                responseCode = "201",
+                description = "User updated successfully",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(type = SchemaType.ARRAY, implementation = UserDTO::class)
+                )]
+            )
+        ]
+    )
+    @Throws(ConstraintViolationException::class)
     fun updateUser(updatedUserDTO: UserDTO): Response {
-        return try {
-            val updatedUser = updatedUserDTO.toDomain()
-            userRepository.update(updatedUser)
-            Response.created(URI.create("/users/${updatedUser.id}")).entity(updatedUser).build()
-        } catch (e: ConstraintViolationException) {
-            Response.status(Response.Status.BAD_REQUEST)
-                .entity(ErrorHandlerUtils.getValidationMessage(e))
-                .build()
-        } catch (e: IllegalArgumentException) {
-            Response.status(Response.Status.BAD_REQUEST).entity(e.message).build()
-        }
+        val updatedUser = updatedUserDTO.toDomain()
+        userRepository.update(updatedUser)
+        return Response.created(URI.create("/users/${updatedUser.id}")).entity(updatedUser).build()
     }
 
+    @Operation(
+        summary = "Delete user",
+        description = "Delete a user by id"
+    )
+    @APIResponses(
+        value = [
+            APIResponse(
+                responseCode = "204",
+                description = "User deleted successfully",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(type = SchemaType.ARRAY, implementation = UserDTO::class)
+                )]
+            )
+        ]
+    )
     @DELETE
     @Path("/{id}")
     fun deleteUser(@PathParam("id") id: String): Response {

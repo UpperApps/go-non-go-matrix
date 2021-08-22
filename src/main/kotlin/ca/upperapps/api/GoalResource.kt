@@ -223,8 +223,7 @@ class GoalResource {
     @POST
     @Path("/{goalId}/criteria")
     fun createCriteria(@PathParam("goalId") goalId: String, criteriaDTO:CriteriaDTO): Response {
-        val criteriaList: List<Criteria> = goalService.persistCriteria(goalId, criteriaDTO.toDomain())
-        return Response.ok(criteriaList).build()
+        return Response.ok(goalService.saveCriteria(goalId, criteriaDTO.toDomain())).build()
     }
 
     // TODO Implement this method

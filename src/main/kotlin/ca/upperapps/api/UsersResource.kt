@@ -143,7 +143,7 @@ class UsersResource {
     fun createUser(userDTO: UserDTO): Response {
         val newUser = userDTO.toDomain()
         userRepository.persist(newUser)
-        return Response.created(URI.create("/users/${newUser.id}")).entity(newUser).build()
+        return Response.created(URI.create("/users/${newUser.id}")).entity(UserDTO.fromDomain(newUser)).build()
     }
 
     @PUT

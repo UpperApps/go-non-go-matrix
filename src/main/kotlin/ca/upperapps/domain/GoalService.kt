@@ -45,11 +45,6 @@ class GoalService {
         }
     }
 
-    fun getCriteria(goalId: String): List<Criteria> {
-
-        return listOf()
-    }
-
     // TODO It's necessary to recreate the matrix everytime we include or remove a new criteria.
     fun saveCriteria(goalId: String, criteria: Criteria): Criteria {
         return try {
@@ -58,7 +53,7 @@ class GoalService {
 
             val criteriaToPersist = goalCriteria?.plus(criteria) ?: listOf(criteria)
 
-            goalRepository.persist(goal.copy(criteria = criteriaToPersist))
+            goalRepository.update(goal.copy(criteria = criteriaToPersist))
             goalRepository.findById(ObjectId(goalId))!!.criteria!!.find { it.id == criteria.id }!!
 
         } catch (e: NullPointerException) {

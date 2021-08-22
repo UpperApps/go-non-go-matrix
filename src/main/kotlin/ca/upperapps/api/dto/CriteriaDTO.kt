@@ -16,6 +16,9 @@ data class CriteriaDTO(val id: ObjectId?, val definition: String) {
     }
 
     fun toDomain(): Criteria {
-        return Criteria(id ?: ObjectId() , definition)
+        return Criteria(
+            id = id ?: ObjectId(),
+            definition = definition
+        )
     }
 }

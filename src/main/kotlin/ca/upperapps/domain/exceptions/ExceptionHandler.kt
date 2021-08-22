@@ -23,7 +23,7 @@ class ExceptionHandler : ExceptionMapper<Exception> {
                 .entity(exception)
                 .build()
             else -> Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(ErrorResponseBody("Something unexpected happened. Try again"))
+                .entity(ErrorResponseBody("Something unexpected happened. Error: ${exception?.message}", exception!!::class.simpleName))
                 .build()
         }
     }

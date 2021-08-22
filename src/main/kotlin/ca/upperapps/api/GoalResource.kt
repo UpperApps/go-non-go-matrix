@@ -1,6 +1,6 @@
 package ca.upperapps.api
 
-import ca.upperapps.api.dto.`in`.CriteriaDTO
+import ca.upperapps.api.dto.CriteriaDTO
 import ca.upperapps.api.dto.out.GoalDTO
 import ca.upperapps.api.dto.out.GoalListDTO
 import ca.upperapps.domain.*
@@ -13,6 +13,7 @@ import org.eclipse.microprofile.openapi.annotations.enums.SchemaType
 import org.eclipse.microprofile.openapi.annotations.media.Content
 import org.eclipse.microprofile.openapi.annotations.media.Schema
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
@@ -51,7 +52,10 @@ class GoalResource {
             APIResponse(
                 responseCode = "200",
                 description = "List of goals returned",
-                content = [Content(mediaType = "application/json", schema = Schema(type = SchemaType.ARRAY,implementation = GoalDTO::class))]
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(type = SchemaType.ARRAY, implementation = GoalDTO::class)
+                )]
             )
         ]
     )
@@ -155,7 +159,6 @@ class GoalResource {
 
     @PUT
     @Path("/{goalId}")
-    @POST
     @Operation(
         summary = "Update a user's goal",
         description = "Update a user's goal"
@@ -221,17 +224,53 @@ class GoalResource {
     }
 
     @POST
+    @Operation(
+        summary = "Create a new goal criteria",
+        description = "Create a new goal criteria"
+    )
+    @APIResponses(
+        value = [
+            APIResponse(
+                responseCode = "201",
+                description = "Criteria created",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = CriteriaDTO::class))]
+            ),
+            APIResponse(
+                responseCode = "404",
+                description = "User or goal not found when creating the criteria",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class)
+                )]
+            ),
+            APIResponse(
+                responseCode = "400",
+                description = "Invalid data",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class)
+                )]
+            )
+        ]
+    )
     @Path("/{goalId}/criteria")
-    fun createCriteria(@PathParam("goalId") goalId: String, criteriaDTO:CriteriaDTO): Response {
-        return Response.ok(goalService.saveCriteria(goalId, criteriaDTO.toDomain())).build()
+    @Throws(ConstraintViolationException::class)
+    fun createCriteria(
+        @PathParam("userId") userId: String,
+        @PathParam("goalId") goalId: String,
+        @RequestBody criteriaDTO: CriteriaDTO
+    ): Response {
+        val criteria: Criteria = goalService.saveCriteria(goalId, criteriaDTO.toDomain())
+        return Response.created(URI.create("users/$userId/goals/$goalId/criteria/${criteria.id}"))
+            .entity(CriteriaDTO.fromDomain(criteria)).build()
     }
 
     // TODO Implement this method
     @GET
     @Path("/{goalId}/criteria")
     fun listAllCriteria(@PathParam("goalId") goalId: String): Response {
-        val criteriaList: List<Criteria> = goalService.getCriteria(goalId)
-        return Response.ok().build()
+        val criteriaList: List<Criteria>? = goalRepository.findById(ObjectId(goalId))?.criteria
+        return Response.ok(criteriaList).build()
     }
 
     // TODO Implement this method

@@ -7,7 +7,6 @@ import ca.upperapps.domain.Goal
 import ca.upperapps.domain.JudgementMatrix
 import ca.upperapps.domain.Scenario
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
 import org.bson.types.ObjectId
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -35,18 +34,5 @@ data class GoalDTO(
                 goal.scenario
             )
         }
-    }
-
-    fun toDomain(): Goal {
-        return Goal(
-            id = id ?: ObjectId(),
-            goal = goal,
-            user = user.toDomain(),
-            description = description,
-            criteria = criteria?.map { criteriaDTO -> criteriaDTO.toDomain() },
-            options = options?.map { optionDTO -> optionDTO.toDomain()  },
-            judgementMatrix = judgementMatrix,
-            scenario = scenario
-        )
     }
 }

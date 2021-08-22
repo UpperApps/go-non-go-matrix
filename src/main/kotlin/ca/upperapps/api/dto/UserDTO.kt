@@ -9,8 +9,8 @@ import org.bson.types.ObjectId
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class UserDTO (
     val id: ObjectId?,
-    @JsonProperty("first-name") val firstName: String,
-    @JsonProperty("last-name") val lastName: String,
+    val firstName: String,
+    val lastName: String,
     val username: String,
     val email: String,
     val password: String? = null

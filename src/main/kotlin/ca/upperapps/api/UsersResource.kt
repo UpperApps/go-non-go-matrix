@@ -1,17 +1,21 @@
 package ca.upperapps.api
 
 import ca.upperapps.api.dto.UserDTO
+import ca.upperapps.api.dto.out.UserListDTO
 import ca.upperapps.domain.Goal
 import ca.upperapps.domain.User
 import ca.upperapps.domain.UserRepository
 import ca.upperapps.domain.exceptions.EntityNotFoundException
 import ca.upperapps.domain.exceptions.ErrorHandlerUtils
 import ca.upperapps.domain.exceptions.ExceptionHandler
+import io.quarkus.mongodb.panache.kotlin.PanacheQuery
+import io.quarkus.panache.common.Page
 import org.bson.types.ObjectId
 import org.eclipse.microprofile.openapi.annotations.Operation
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType
 import org.eclipse.microprofile.openapi.annotations.media.Content
 import org.eclipse.microprofile.openapi.annotations.media.Schema
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
@@ -29,6 +33,7 @@ class UsersResource {
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger: Logger = Logger.getLogger(javaClass.enclosingClass.name)
+        private const val DEFAULT_PAGE_SIZE = 10
     }
 
     @Inject
@@ -51,7 +56,17 @@ class UsersResource {
             )
         ]
     )
-    fun listAll(): Response = Response.ok(userRepository.listAll().map { user -> UserDTO.fromDomain(user) }).build()
+    fun listAll(
+        @Parameter(description = "Page Index (default = 0).") @QueryParam("page") page: Int?,
+        @Parameter(description = "The size of the page to be returned.") @QueryParam("size") size: Int?
+    ): Response {
+        var users: PanacheQuery<User> = userRepository.findAll()
+        users.page(Page.of(page ?: 0, size ?: DEFAULT_PAGE_SIZE))
+        return Response.ok(users.list()
+            .map { user -> UserDTO.fromDomain(user) }
+            .let { UserListDTO(users.pageCount(), users.count(), it) })
+            .build()
+    }
 
     @GET
     @Path("/{id}")

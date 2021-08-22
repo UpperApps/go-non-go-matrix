@@ -1,14 +1,17 @@
 package ca.upperapps.api
 
 import ca.upperapps.api.dto.out.GoalDTO
+import ca.upperapps.api.dto.out.GoalListDTO
 import ca.upperapps.domain.*
 import ca.upperapps.domain.exceptions.EntityNotFoundException
 import ca.upperapps.domain.exceptions.ExceptionHandler
+import io.quarkus.panache.common.Page
 import org.bson.types.ObjectId
 import org.eclipse.microprofile.openapi.annotations.Operation
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType
 import org.eclipse.microprofile.openapi.annotations.media.Content
 import org.eclipse.microprofile.openapi.annotations.media.Schema
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
@@ -27,6 +30,7 @@ class GoalResource {
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger: Logger = Logger.getLogger(javaClass.enclosingClass.name)
+        private const val DEFAULT_PAGE_SIZE = 10
     }
 
     @Inject
@@ -52,9 +56,17 @@ class GoalResource {
             )
         ]
     )
-    fun listAll(@PathParam("userId") userId: String): Response {
-        val goals = goalRepository.listAllUserGoals(userId)
-        return Response.ok(goals.map { goal -> GoalDTO.fromDomain(goal) }).build()
+    fun listAll(
+        @PathParam("userId") userId: String,
+        @Parameter(description = "Page Index (default = 0).") @QueryParam("page") page: Int?,
+        @Parameter(description = "The size of the page to be returned.") @QueryParam("size") size: Int?
+    ): Response {
+        val goals = goalRepository.find("user._id", ObjectId(userId))// goalRepository.listAllUserGoals(userId)
+        goals.page(Page.of(page ?: 0, size ?: DEFAULT_PAGE_SIZE))
+        return Response.ok(goals.list()
+            .map { goal -> GoalDTO.fromDomain(goal) }
+            .let { GoalListDTO(goals.pageCount(), goals.count(), it) })
+            .build()
     }
 
     @GET
@@ -207,6 +219,15 @@ class GoalResource {
     fun deleteGoal(@PathParam("id") id: String): Response {
         goalRepository.deleteById(ObjectId(id))
         return Response.noContent().build()
+    }
+
+    // TODO Implement this method
+    @GET
+    @Path("/{goalId}/criteria")
+    fun createCriteria(@PathParam("goalId") goalId: String, criteria:List<Criteria>): Response {
+
+        val criteriaList: List<Criteria> = goalService.createCriteria(goalId, criteria)
+        return Response.ok().build()
     }
 
     // TODO Implement this method

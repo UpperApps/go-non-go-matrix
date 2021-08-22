@@ -18,7 +18,7 @@ data class GoalDTO(
     val description: String? = null,
     val criteria: List<CriteriaDTO>? = null,
     val options: List<OptionDTO>? = null,
-    @JsonProperty("judgement-matrix") val judgementMatrix: JudgementMatrix? = null,
+    val judgementMatrix: JudgementMatrix? = null,
     val scenario: List<Scenario>? = null
 ) {
 

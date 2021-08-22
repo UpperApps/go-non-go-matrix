@@ -1,6 +1,7 @@
 package ca.upperapps.domain
 
 import ca.upperapps.domain.exceptions.EntityNotFoundException
+import org.bson.types.ObjectId
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.enterprise.context.ApplicationScoped
@@ -46,6 +47,12 @@ class GoalService {
 
     fun getCriteria(goalId: String): List<Criteria> {
 
+        return listOf()
+    }
+
+    fun createCriteria(goalId: String, criteria: List<Criteria>): List<Criteria> {
+        // TODO Next implementation
+        val criteria = goalRepository.findById(ObjectId(goalId))?.criteria
         return listOf()
     }
 }

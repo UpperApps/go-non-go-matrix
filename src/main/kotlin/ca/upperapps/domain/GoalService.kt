@@ -50,9 +50,21 @@ class GoalService {
         return listOf()
     }
 
-    fun createCriteria(goalId: String, criteria: List<Criteria>): List<Criteria> {
-        // TODO Next implementation
-        val criteria = goalRepository.findById(ObjectId(goalId))?.criteria
-        return listOf()
+    // TODO It's necessary to recreate the matrix everytime we include or remove a new criteria.
+    fun persistCriteria(goalId: String, criteria: Criteria): List<Criteria> {
+        return try {
+            val goal = goalRepository.findById(ObjectId(goalId))!!
+            val goalCriteria = goal.criteria
+
+            val criteriaToPersist = goalCriteria?.plus(criteria) ?: listOf(criteria)
+
+            goalRepository.persist(goal.copy(criteria = criteriaToPersist))
+            goalRepository.findById(ObjectId(goalId))!!.criteria!!
+
+        } catch (e: NullPointerException) {
+            val errorMessage = "Goal not found: ${e.message}"
+            logger.log(Level.SEVERE, errorMessage)
+            throw EntityNotFoundException(errorMessage)
+        }
     }
 }

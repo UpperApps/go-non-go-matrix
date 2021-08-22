@@ -1,5 +1,6 @@
 package ca.upperapps.api
 
+import ca.upperapps.api.dto.`in`.CriteriaDTO
 import ca.upperapps.api.dto.out.GoalDTO
 import ca.upperapps.api.dto.out.GoalListDTO
 import ca.upperapps.domain.*
@@ -15,13 +16,11 @@ import org.eclipse.microprofile.openapi.annotations.parameters.Parameter
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
-import org.jboss.resteasy.util.NoContent
 import org.valiktor.ConstraintViolationException
 import java.net.URI
 import java.util.logging.Logger
 import javax.inject.Inject
 import javax.ws.rs.*
-import javax.ws.rs.core.Link
 import javax.ws.rs.core.Response
 
 @Path("/users/{userId}/goals")
@@ -221,13 +220,11 @@ class GoalResource {
         return Response.noContent().build()
     }
 
-    // TODO Implement this method
-    @GET
+    @POST
     @Path("/{goalId}/criteria")
-    fun createCriteria(@PathParam("goalId") goalId: String, criteria:List<Criteria>): Response {
-
-        val criteriaList: List<Criteria> = goalService.createCriteria(goalId, criteria)
-        return Response.ok().build()
+    fun createCriteria(@PathParam("goalId") goalId: String, criteriaDTO:CriteriaDTO): Response {
+        val criteriaList: List<Criteria> = goalService.persistCriteria(goalId, criteriaDTO.toDomain())
+        return Response.ok(criteriaList).build()
     }
 
     // TODO Implement this method
@@ -238,7 +235,7 @@ class GoalResource {
         return Response.ok().build()
     }
 
-
+    // TODO Implement this method
     @DELETE
     @Path("/{goalId}/criteria/{criteriaId}")
     fun deleteCriteria(@PathParam("goalId") goalId: String, @PathParam("criteriaId") criteriaId: String): Response {

@@ -1,6 +1,7 @@
 package ca.upperapps.api
 
 import ca.upperapps.api.dto.CriteriaDTO
+import ca.upperapps.api.dto.out.CriteriaListDTO
 import ca.upperapps.api.dto.out.GoalDTO
 import ca.upperapps.api.dto.out.GoalListDTO
 import ca.upperapps.domain.*
@@ -54,7 +55,7 @@ class GoalResource {
                 description = "List of goals returned",
                 content = [Content(
                     mediaType = "application/json",
-                    schema = Schema(type = SchemaType.ARRAY, implementation = GoalDTO::class)
+                    schema = Schema(type = SchemaType.OBJECT, implementation = GoalListDTO::class)
                 )]
             )
         ]
@@ -265,15 +266,54 @@ class GoalResource {
             .entity(CriteriaDTO.fromDomain(criteria)).build()
     }
 
-    // TODO Implement this method
     @GET
+    @Operation(
+        summary = "Get goal criteria list",
+        description = "Get a list with all criteria of a given goal"
+    )
+    @APIResponses(
+        value = [
+            APIResponse(
+                responseCode = "200",
+                description = "Success",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(type = SchemaType.OBJECT, implementation = CriteriaListDTO::class)
+                )]
+            )
+        ]
+    )
     @Path("/{goalId}/criteria")
-    fun listAllCriteria(@PathParam("goalId") goalId: String): Response {
-        val criteriaList: List<Criteria>? = goalRepository.findById(ObjectId(goalId))?.criteria
-        return Response.ok(criteriaList).build()
+    fun listAllCriteria(
+        @PathParam("goalId") goalId: String,
+        @Parameter(description = "Page Index (default = 0).") @QueryParam("page") page: Int?,
+        @Parameter(description = "The size of the page to be returned.") @QueryParam("size") size: Int?
+    ): Response {
+        val pageSize = size ?: DEFAULT_PAGE_SIZE
+        val pageIndex = page ?: 0
+        val criteriaList: List<Criteria>? = goalRepository.listGoalCriteria(goalId, pageIndex, pageSize)
+        val totalRecords = criteriaList?.size ?: 0
+
+        return Response.ok(
+            CriteriaListDTO(
+                pageCount(totalRecords, pageSize),
+                totalRecords,
+                getPagedList(list = criteriaList, page = pageIndex, size = pageSize)?.map { CriteriaDTO.fromDomain(it) })
+        ).build()
     }
 
-    // TODO Implement this method
+    // TODO Consider move these methods to a helper class. They were created cause I wasn't able to use the Panache pagination for an
+    //  embedded array of objects.
+    private fun pageCount(totalRecords: Int, pageSize: Int): Int {
+        return if (totalRecords == 0) 0
+        else if (totalRecords % pageSize == 0) totalRecords / pageSize else (totalRecords / pageSize) + 1
+    }
+
+    private fun <T> getPagedList(list: List<T>?, page: Int, size: Int): List<T>? {
+        return list?.chunked(size)?.get(page)
+    }
+
+    // TODO Implement delete criteria
     @DELETE
     @Path("/{goalId}/criteria/{criteriaId}")
     fun deleteCriteria(@PathParam("goalId") goalId: String, @PathParam("criteriaId") criteriaId: String): Response {
@@ -282,27 +322,27 @@ class GoalResource {
         return Response.noContent().build()
     }
 
-    // TODO Implement this method
+    // TODO Implement list all options
     @GET
     @Path("/{goalId}/options")
     fun listAllOptions(@PathParam("goalId") goalId: String): Response = Response.ok().build()
 
+    // TODO Implement create Options
     @POST
     @Path("/{goalId}/options")
     fun saveOptions(option: List<Option>): Response {
-        // TODO Implement this method
 
         return Response.ok().build()
     }
 
+    // TODO Implement update option
     @PUT
     @Path("/{goalId}/options")
     fun updateOptions(updatedOption: List<Option>): Response {
-
-        // TODO Implement this method
         return Response.ok().build()
     }
 
+    // TODO Implement delete option
     @DELETE
     @Path("/{goalId}/options/{optionId}")
     fun deleteOption(@PathParam("goalId") goalId: String, @PathParam("optionId") optionId: String): Response {

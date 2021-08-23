@@ -51,7 +51,7 @@ class UsersResource {
                 description = "Success",
                 content = [Content(
                     mediaType = "application/json",
-                    schema = Schema(type = SchemaType.ARRAY, implementation = UserDTO::class)
+                    schema = Schema(type = SchemaType.OBJECT, implementation = UserListDTO::class)
                 )]
             )
         ]
@@ -81,7 +81,7 @@ class UsersResource {
                 description = "User found",
                 content = [Content(
                     mediaType = "application/json",
-                    schema = Schema(type = SchemaType.ARRAY, implementation = UserDTO::class)
+                    schema = Schema(type = SchemaType.OBJECT, implementation = UserDTO::class)
                 )]
             ),
             APIResponse(
@@ -127,7 +127,7 @@ class UsersResource {
                 description = "User created successfully",
                 content = [Content(
                     mediaType = "application/json",
-                    schema = Schema(type = SchemaType.ARRAY, implementation = UserDTO::class)
+                    schema = Schema(type = SchemaType.OBJECT, implementation = UserDTO::class)
                 )]
             ),
             APIResponse(
@@ -158,7 +158,7 @@ class UsersResource {
                 description = "User updated successfully",
                 content = [Content(
                     mediaType = "application/json",
-                    schema = Schema(type = SchemaType.ARRAY, implementation = UserDTO::class)
+                    schema = Schema(type = SchemaType.OBJECT, implementation = UserDTO::class)
                 )]
             )
         ]

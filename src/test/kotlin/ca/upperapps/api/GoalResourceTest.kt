@@ -31,7 +31,7 @@ class GoalResourceTest {
         }
     }
 
-    // TASK Fix the tests or remove comments
+    // TODO Fix the tests or remove comments
     @Test
     fun getGoalById() {
 //        val user = User()

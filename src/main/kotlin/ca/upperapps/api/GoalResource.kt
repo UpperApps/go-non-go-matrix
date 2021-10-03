@@ -302,27 +302,55 @@ class GoalResource {
         ).build()
     }
 
-    // TODO Consider move these methods to a helper class. They were created cause I wasn't able to use the Panache pagination for an
-    //  embedded array of objects.
-    private fun pageCount(totalRecords: Int, pageSize: Int): Int {
-        return if (totalRecords == 0) 0
-        else if (totalRecords % pageSize == 0) totalRecords / pageSize else (totalRecords / pageSize) + 1
+    @PUT
+    @Operation(
+        summary = "Update a goal criteria",
+        description = "Update a goal criteria"
+    )
+    @APIResponses(
+        value = [
+            APIResponse(
+                responseCode = "201",
+                description = "Criteria updated",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = CriteriaDTO::class))]
+            ),
+            APIResponse(
+                responseCode = "404",
+                description = "User or goal not found when updating the criteria",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class)
+                )]
+            ),
+            APIResponse(
+                responseCode = "400",
+                description = "Invalid data",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ExceptionHandler.ErrorResponseBody::class)
+                )]
+            )
+        ]
+    )
+    @Path("/{goalId}/criteria/")
+    @Throws(ConstraintViolationException::class)
+    fun updateCriteria(
+        @PathParam("userId") userId: String,
+        @PathParam("goalId") goalId: String,
+        @RequestBody criteriaDTO: CriteriaDTO
+    ): Response {
+        val criteria: Criteria = goalService.updateCriteria(goalId, criteriaDTO.toDomain())
+        return Response.created(URI.create("users/$userId/goals/$goalId/criteria/${criteria.id}"))
+            .entity(CriteriaDTO.fromDomain(criteria)).build()
     }
 
-    private fun <T> getPagedList(list: List<T>?, page: Int, size: Int): List<T>? {
-        return list?.chunked(size)?.get(page)
-    }
-
-    // TODO Implement delete criteria
     @DELETE
     @Path("/{goalId}/criteria/{criteriaId}")
     fun deleteCriteria(@PathParam("goalId") goalId: String, @PathParam("criteriaId") criteriaId: String): Response {
-        // TODO Implement this method
-
+        goalService.deleteCriteria(goalId, criteriaId)
         return Response.noContent().build()
     }
 
-    // TODO Implement list all options
     @GET
     @Path("/{goalId}/options")
     fun listAllOptions(@PathParam("goalId") goalId: String): Response = Response.ok().build()
@@ -349,5 +377,16 @@ class GoalResource {
         // TODO Implement this method
 
         return Response.noContent().build()
+    }
+
+    // TODO Consider move these methods to a helper class. They were created cause I wasn't able to use the Panache pagination for an
+    //  embedded array of objects.
+    private fun pageCount(totalRecords: Int, pageSize: Int): Int {
+        return if (totalRecords == 0) 0
+        else if (totalRecords % pageSize == 0) totalRecords / pageSize else (totalRecords / pageSize) + 1
+    }
+
+    private fun <T> getPagedList(list: List<T>?, page: Int, size: Int): List<T>? {
+        return list?.chunked(size)?.get(page)
     }
 }

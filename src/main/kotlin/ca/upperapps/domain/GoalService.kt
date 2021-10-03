@@ -62,4 +62,40 @@ class GoalService {
             throw EntityNotFoundException(errorMessage)
         }
     }
+
+    fun updateCriteria(goalId: String, updatedCriteria: Criteria): Criteria {
+        return try {
+            val goal: Goal = goalRepository.findById(ObjectId(goalId))!!
+            val criteriaList = goal.criteria
+
+            val originalCriteria = criteriaList?.find { it.id == updatedCriteria.id }!!
+            val index = criteriaList?.indexOf(originalCriteria)
+            var updatedCriteriaList = goal.criteria.toMutableList()
+            updatedCriteriaList.set(index, updatedCriteria)
+            goalRepository.update(goal.copy(criteria = updatedCriteriaList))
+
+            goalRepository.findById(ObjectId(goalId))?.criteria?.find { it.id == updatedCriteria.id }!!
+        } catch (e: NullPointerException) {
+            val errorMessage = "Goal or criteria not found: ${updatedCriteria.id}"
+            logger.log(Level.SEVERE, "$errorMessage: $e")
+            throw EntityNotFoundException(errorMessage)
+        }
+    }
+
+    fun deleteCriteria(goalId: String, criteriaId: String) {
+        try {
+            val goal: Goal = goalRepository.findById(ObjectId(goalId))!!
+            val criteriaList = goal.criteria
+
+            val originalCriteria = criteriaList?.find { it.id == ObjectId(criteriaId) }!!
+            var updatedCriteriaList = goal.criteria.toMutableList()
+            updatedCriteriaList.remove(originalCriteria)
+            goalRepository.update(goal.copy(criteria = updatedCriteriaList))
+
+        } catch (e: NullPointerException) {
+            val errorMessage = "Goal or criteria not found: $criteriaId"
+            logger.log(Level.SEVERE, "$errorMessage: $e")
+            throw EntityNotFoundException(errorMessage)
+        }
+    }
 }

@@ -67,6 +67,7 @@ class GoalResource {
     ): Response {
         val goals = goalRepository.find("user._id", ObjectId(userId))// goalRepository.listAllUserGoals(userId)
         goals.page(Page.of(page ?: 0, size ?: DEFAULT_PAGE_SIZE))
+
         return Response.ok(goals.list()
             .map { goal -> GoalDTO.fromDomain(goal) }
             .let { GoalListDTO(goals.pageCount(), goals.count(), it) })
@@ -358,7 +359,7 @@ class GoalResource {
     // TODO Implement create Options
     @POST
     @Path("/{goalId}/options")
-    fun saveOptions(option: List<Option>): Response {
+    fun saveOptions(evaluatedItem: List<EvaluatedItem>): Response {
 
         return Response.ok().build()
     }
@@ -366,7 +367,7 @@ class GoalResource {
     // TODO Implement update option
     @PUT
     @Path("/{goalId}/options")
-    fun updateOptions(updatedOption: List<Option>): Response {
+    fun updateOptions(updatedEvaluatedItem: List<EvaluatedItem>): Response {
         return Response.ok().build()
     }
 

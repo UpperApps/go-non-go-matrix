@@ -7,16 +7,15 @@ import org.bson.types.ObjectId
 import org.valiktor.functions.hasSize
 import org.valiktor.validate
 
-data class Option @BsonCreator constructor(
+data class EvaluatedItem @BsonCreator constructor(
     @BsonId val id: ObjectId,
     @BsonProperty("name") val name: String,
     @BsonProperty("description") val description: String?,
-    @BsonProperty("score") val score: Map<String, Int>?
 ) {
     init {
         validate(this) {
-            validate(Option::name).hasSize(5, 30)
-            validate(Option::description).hasSize(0, 140)
+            validate(EvaluatedItem::name).hasSize(5, 30)
+            validate(EvaluatedItem::description).hasSize(0, 140)
         }
     }
 }

@@ -16,9 +16,11 @@ data class Goal @BsonCreator constructor(
     @BsonProperty("goal") val goal: String,
     @BsonProperty("user") val user: User,
     @BsonProperty("description") val description: String? = null,
+    @BsonProperty("evaluatedItemScoreMaxRange") val evaluatedItemScoreMaxRange:Int? = 5,
+    @BsonProperty("criteriaWeightMaxRange") val criteriaWeightMaxRange: Int? = 1,
     @BsonProperty("criteria") val criteria: List<Criteria>? = null,
-    @BsonProperty("options") val options: List<Option>? = null,
-    @BsonProperty("judgementMatrix") val judgementMatrix: JudgementMatrix? = null,
+    @BsonProperty("evaluatedItems") val evaluatedItems: List<EvaluatedItem>? = null,
+    @BsonProperty("criteriaPairs") val criteriaPairs: List<CriteriaPair>? = null,
     @BsonProperty("scenario") val scenario: List<Scenario>? = null
 ): PanacheMongoEntityBase() {
     init {

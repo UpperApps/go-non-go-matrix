@@ -1,12 +1,11 @@
 package ca.upperapps.api.dto
 
-import ca.upperapps.domain.Criteria
-import ca.upperapps.domain.Option
+import ca.upperapps.domain.EvaluatedItem
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.bson.types.ObjectId
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class OptionDTO(
+data class EvaluatedItemDTO(
     val id: ObjectId?,
     val name: String,
     val description: String? = null,
@@ -14,18 +13,18 @@ data class OptionDTO(
 ) {
 
     companion object {
-        fun fromDomain(option: Option): OptionDTO {
-            return OptionDTO(
-                option.id,
-                option.name,
-                option.description,
-                option.score
+        fun fromDomain(evaluatedItem: EvaluatedItem): EvaluatedItemDTO {
+            return EvaluatedItemDTO(
+                evaluatedItem.id,
+                evaluatedItem.name,
+                evaluatedItem.description,
+                evaluatedItem.score
             )
         }
     }
 
-    fun toDomain(): Option {
-        return Option(
+    fun toDomain(): EvaluatedItem {
+        return EvaluatedItem(
             id = this.id ?: ObjectId(),
             name = this.name,
             description = this.description,

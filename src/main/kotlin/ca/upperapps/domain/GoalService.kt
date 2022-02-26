@@ -19,7 +19,7 @@ class GoalService {
 
     fun save(goal: Goal): Goal {
         try {
-            val goalToPersist = goal.copy(criteria = null, options = null, judgementMatrix = null, scenario = null)
+            val goalToPersist = goal.copy(criteria = null, evaluatedItems = null, judgementMatrix = null, scenario = null)
             goalRepository.persist(goalToPersist)
             return goalRepository.findById(goalToPersist.id)!!
         } catch (e: NullPointerException) {

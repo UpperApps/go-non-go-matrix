@@ -1,10 +1,10 @@
 package ca.upperapps.api.dto.out
 
 import ca.upperapps.api.dto.CriteriaDTO
-import ca.upperapps.api.dto.OptionDTO
+import ca.upperapps.api.dto.EvaluatedItemDTO
 import ca.upperapps.api.dto.UserDTO
+import ca.upperapps.domain.CriteriaPair
 import ca.upperapps.domain.Goal
-import ca.upperapps.domain.JudgementMatrix
 import ca.upperapps.domain.Scenario
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.bson.types.ObjectId
@@ -16,8 +16,8 @@ data class GoalDTO(
     val user: UserDTO,
     val description: String? = null,
     val criteria: List<CriteriaDTO>? = null,
-    val options: List<OptionDTO>? = null,
-    val judgementMatrix: JudgementMatrix? = null,
+    val options: List<EvaluatedItemDTO>? = null,
+    val criteriaPairs: List<CriteriaPair>? = null,
     val scenario: List<Scenario>? = null
 ) {
 
@@ -29,8 +29,8 @@ data class GoalDTO(
                 UserDTO.fromDomain(goal.user),
                 goal.description,
                 goal.criteria?.map { criteria ->  CriteriaDTO.fromDomain(criteria) },
-                goal.options?.map { option -> OptionDTO.fromDomain(option) },
-                goal.judgementMatrix,
+                goal.evaluatedItems?.map { option -> EvaluatedItemDTO.fromDomain(option) },
+                goal.criteriaPairs,
                 goal.scenario
             )
         }

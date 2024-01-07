@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import DynamoUserRepository from './infrastructure/DynamoUserRepository';
-import { UserRepository } from './domain/user/UserRepository';
+import DynamodbUserRepository from './infrastructure/repository/dynamodb.user.repository';
+import { UserRepository } from './domain/user/user.repository';
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
-import DynamoDBConfig from './infrastructure/config/DynamoDBConfig';
+import DynamodbConfig from './infrastructure/config/dynamodb.config';
 
 const userRepositoryProvider = {
   provide: UserRepository,
-  useClass: DynamoUserRepository,
+  useClass: DynamodbUserRepository,
 };
 
 const dynamoDBDocumentProvider = {
   provide: DynamoDBDocument,
-  useValue: DynamoDBConfig.getDynamoDBDocument(),
+  useValue: DynamodbConfig.getDynamoDBDocument(),
 };
 
 @Module({

@@ -1,12 +1,12 @@
 import 'reflect-metadata';
 import { v4 as uuidv4 } from 'uuid';
 import { fakerEN as faker } from '@faker-js/faker';
-import { User } from '../../src/domain/user/User';
-import { UserRepository } from '../../src/domain/user/UserRepository';
+import { User } from '../../src/domain/user/user';
+import { UserRepository } from '../../src/domain/user/user.repository';
 import { Test, TestingModule } from '@nestjs/testing';
-import DynamoUserRepository from '../../src/infrastructure/DynamoUserRepository';
+import DynamodbUserRepository from '../../src/infrastructure/repository/dynamodb.user.repository';
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
-import DynamoDBConfig from '../../src/infrastructure/config/DynamoDBConfig';
+import DynamodbConfig from '../../src/infrastructure/config/dynamodb.config';
 
 let user: User;
 let userRepository: UserRepository;
@@ -16,11 +16,11 @@ beforeEach(async () => {
     providers: [
       {
         provide: DynamoDBDocument,
-        useValue: DynamoDBConfig.getDynamoDBDocument(),
+        useValue: DynamodbConfig.getDynamoDBDocument(),
       },
       {
         provide: UserRepository,
-        useClass: DynamoUserRepository,
+        useClass: DynamodbUserRepository,
       },
     ],
   }).compile();

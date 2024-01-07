@@ -1,15 +1,15 @@
 import 'reflect-metadata';
 import { DynamoDBDocument, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 
-import type { User } from '../domain/user/User';
+import type { User } from '../../domain/user/user';
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from '../domain/user/UserRepository';
+import { UserRepository } from '../../domain/user/user.repository';
 
 const USER_PK = 'USER';
 const TABLE_NAME = 'go-non-go-matrix';
 
 @Injectable()
-class DynamoUserRepository implements UserRepository {
+class DynamodbUserRepository implements UserRepository {
   constructor(private readonly dynamoDBDocument: DynamoDBDocument) {}
 
   async delete(id: string): Promise<void> {
@@ -144,4 +144,4 @@ class DynamoUserRepository implements UserRepository {
   }
 }
 
-export default DynamoUserRepository;
+export default DynamodbUserRepository;

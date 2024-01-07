@@ -1,11 +1,11 @@
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
-import { DynamoDBConfigParams } from './dto/DynamoDBConfigParams';
+import { DynamodbConfigParams } from './dto/dynamodb.config.params';
 import { DynamoDB } from '@aws-sdk/client-dynamodb';
 
-class DynamoDBConfig {
+class DynamodbConfig {
   public static getDynamoDBDocument(): DynamoDBDocument {
     // TODO: Move this to a config file
-    const dynamoDBConfigParams: DynamoDBConfigParams = {
+    const dynamoDBConfigParams: DynamodbConfigParams = {
       region: 'us-east-1',
       endpoint: 'http://localhost:4566',
       credentials: {
@@ -18,4 +18,4 @@ class DynamoDBConfig {
   }
 }
 
-export default DynamoDBConfig;
+export default DynamodbConfig;

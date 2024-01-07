@@ -1,0 +1,52 @@
+{
+  "go-non-go-matrix": [
+    {
+      "PutRequest": {
+        "Item": {
+          "pk": {
+            "S": "USER"
+          },
+          "sk": {
+            "S": "1"
+          },
+          "first_name": {
+            "S": "Rodrigo"
+          },
+          "last_name": {
+            "S": "Melo"
+          },
+          "email": {
+            "S": "rod.melo@gmail.com"
+          },
+          "created_time": {
+            "S": "1702625212"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "pk": {
+            "S": "USER"
+          },
+          "sk": {
+            "S": "2"
+          },
+          "first_name": {
+            "S": "Daiane"
+          },
+          "last_name": {
+            "S": "Melo"
+          },
+          "email": {
+            "S": "dai.melo@gmail.com"
+          },
+          "created_time": {
+            "S": "1702625212"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,499 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Resources": {
+    "goNonGoMatrix": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "KeySchema": [
+          {
+            "AttributeName": "pk",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "sk",
+            "KeyType": "RANGE"
+          }
+        ],
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "pk",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "sk",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "goal_id",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "goal_criteria_sk",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "goal_item_sk",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "criteria_pair_sk",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "item_id",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "criteria_id",
+            "AttributeType": "S"
+          }
+        ],
+        "GlobalSecondaryIndexes": [
+          {
+            "IndexName": "GSI_GOAL_CRITERIA",
+            "KeySchema": [
+              {
+                "AttributeName": "goal_id",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "goal_criteria_sk",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "INCLUDE",
+              "NonKeyAttributes": [
+                "criteria_description",
+                "weight",
+                "created_time",
+                "updated_time",
+                "criteria_id"
+              ]
+            },
+            "ProvisionedThroughput": {
+              "ReadCapacityUnits": 1,
+              "WriteCapacityUnits": 1
+            }
+          },
+          {
+            "IndexName": "GSI_GOAL_ITEM",
+            "KeySchema": [
+              {
+                "AttributeName": "goal_id",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "goal_item_sk",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "INCLUDE",
+              "NonKeyAttributes": [
+                "item_name",
+                "item_description",
+                "created_time",
+                "updated_time",
+                "item_id"
+              ]
+            },
+            "ProvisionedThroughput": {
+              "ReadCapacityUnits": 1,
+              "WriteCapacityUnits": 1
+            }
+          },
+          {
+            "IndexName": "GSI_JUDGEMENT_MATRIX",
+            "KeySchema": [
+              {
+                "AttributeName": "goal_id",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "criteria_pair_sk",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "INCLUDE",
+              "NonKeyAttributes": [
+                "criteria_pair",
+                "priority_on",
+                "score",
+                "created_time",
+                "updated_time"
+              ]
+            },
+            "ProvisionedThroughput": {
+              "ReadCapacityUnits": 1,
+              "WriteCapacityUnits": 1
+            }
+          },
+          {
+            "IndexName": "GSI_ITEM_SCORE",
+            "KeySchema": [
+              {
+                "AttributeName": "item_id",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "criteria_id",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "INCLUDE",
+              "NonKeyAttributes": [
+                "score",
+                "created_time",
+                "updated_time",
+                "item_name"
+              ]
+            },
+            "ProvisionedThroughput": {
+              "ReadCapacityUnits": 1,
+              "WriteCapacityUnits": 1
+            }
+          }
+        ],
+        "BillingMode": "PROVISIONED",
+        "TableName": "go-non-go-matrix",
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 1,
+          "WriteCapacityUnits": 1
+        }
+      }
+    },
+    "TablegoNonGoMatrixReadCapacityScalableTarget": {
+      "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
+      "DependsOn": "go-non-go-matrix",
+      "Properties": {
+        "ServiceNamespace": "dynamodb",
+        "ResourceId": "table/go-non-go-matrix",
+        "ScalableDimension": "dynamodb:table:ReadCapacityUnits",
+        "MinCapacity": 1,
+        "MaxCapacity": 10,
+        "RoleARN": {
+          "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+        }
+      }
+    },
+    "TablegoNonGoMatrixReadCapacityScalingPolicy": {
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+      "DependsOn": "Tablego-non-go-matrixReadCapacityScalableTarget",
+      "Properties": {
+        "ServiceNamespace": "dynamodb",
+        "ResourceId": "table/go-non-go-matrix",
+        "ScalableDimension": "dynamodb:table:ReadCapacityUnits",
+        "PolicyName": "go-non-go-matrix-read-capacity-scaling-policy",
+        "PolicyType": "TargetTrackingScaling",
+        "TargetTrackingScalingPolicyConfiguration": {
+          "PredefinedMetricSpecification": {
+            "PredefinedMetricType": "DynamoDBReadCapacityUtilization"
+          },
+          "ScaleOutCooldown": 60,
+          "ScaleInCooldown": 60,
+          "TargetValue": 70
+        }
+      }
+    },
+    "TablegoNonGoMatrixWriteCapacityScalableTarget": {
+      "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
+      "DependsOn": "go-non-go-matrix",
+      "Properties": {
+        "ServiceNamespace": "dynamodb",
+        "ResourceId": "table/go-non-go-matrix",
+        "ScalableDimension": "dynamodb:table:WriteCapacityUnits",
+        "MinCapacity": 1,
+        "MaxCapacity": 10,
+        "RoleARN": {
+          "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+        }
+      }
+    },
+    "TablegoNonGoMatrixWriteCapacityScalingPolicy": {
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+      "DependsOn": "Tablego-non-go-matrixWriteCapacityScalableTarget",
+      "Properties": {
+        "ServiceNamespace": "dynamodb",
+        "ResourceId": "table/go-non-go-matrix",
+        "ScalableDimension": "dynamodb:table:WriteCapacityUnits",
+        "PolicyName": "go-non-go-matrix-write-capacity-scaling-policy",
+        "PolicyType": "TargetTrackingScaling",
+        "TargetTrackingScalingPolicyConfiguration": {
+          "PredefinedMetricSpecification": {
+            "PredefinedMetricType": "DynamoDBWriteCapacityUtilization"
+          },
+          "ScaleOutCooldown": 60,
+          "ScaleInCooldown": 60,
+          "TargetValue": 70
+        }
+      }
+    },
+    "TablegoNonGoMatrixIndexGSIGOALCRITERIAReadCapacityScalableTarget": {
+      "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
+      "DependsOn": "go-non-go-matrix",
+      "Properties": {
+        "ServiceNamespace": "dynamodb",
+        "ResourceId": "table/go-non-go-matrix/index/GSI_GOAL_CRITERIA",
+        "ScalableDimension": "dynamodb:index:ReadCapacityUnits",
+        "MinCapacity": 1,
+        "MaxCapacity": 10,
+        "RoleARN": {
+          "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+        }
+      }
+    },
+    "TablegoNonGoMatrixIndexGSIGOALCRITERIAReadCapacityScalingPolicy": {
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+      "DependsOn": "Tablego-non-go-matrixIndexGSI_GOAL_CRITERIAReadCapacityScalableTarget",
+      "Properties": {
+        "ServiceNamespace": "dynamodb",
+        "ResourceId": "table/go-non-go-matrix/index/GSI_GOAL_CRITERIA",
+        "ScalableDimension": "dynamodb:index:ReadCapacityUnits",
+        "PolicyName": "go-non-go-matrix-index-GSI_GOAL_CRITERIA-read-capacity-scaling-policy",
+        "PolicyType": "TargetTrackingScaling",
+        "TargetTrackingScalingPolicyConfiguration": {
+          "PredefinedMetricSpecification": {
+            "PredefinedMetricType": "DynamoDBReadCapacityUtilization"
+          },
+          "ScaleOutCooldown": 60,
+          "ScaleInCooldown": 60,
+          "TargetValue": 70
+        }
+      }
+    },
+    "TablegoNonGoMatrixIndexGSIGOALCRITERIAWriteCapacityScalableTarget": {
+      "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
+      "DependsOn": "go-non-go-matrix",
+      "Properties": {
+        "ServiceNamespace": "dynamodb",
+        "ResourceId": "table/go-non-go-matrix/index/GSI_GOAL_CRITERIA",
+        "ScalableDimension": "dynamodb:index:WriteCapacityUnits",
+        "MinCapacity": 1,
+        "MaxCapacity": 10,
+        "RoleARN": {
+          "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+        }
+      }
+    },
+    "TablegoNonGoMatrixIndexGSIGOALCRITERIAWriteCapacityScalingPolicy": {
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+      "DependsOn": "Tablego-non-go-matrixIndexGSI_GOAL_CRITERIAWriteCapacityScalableTarget",
+      "Properties": {
+        "ServiceNamespace": "dynamodb",
+        "ResourceId": "table/go-non-go-matrix/index/GSI_GOAL_CRITERIA",
+        "ScalableDimension": "dynamodb:index:WriteCapacityUnits",
+        "PolicyName": "go-non-go-matrix-index-GSI_GOAL_CRITERIA-write-capacity-scaling-policy",
+        "PolicyType": "TargetTrackingScaling",
+        "TargetTrackingScalingPolicyConfiguration": {
+          "PredefinedMetricSpecification": {
+            "PredefinedMetricType": "DynamoDBWriteCapacityUtilization"
+          },
+          "ScaleOutCooldown": 60,
+          "ScaleInCooldown": 60,
+          "TargetValue": 70
+        }
+      }
+    },
+    "TablegoNonGoMatrixIndexGSIGOALITEMReadCapacityScalableTarget": {
+      "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
+      "DependsOn": "go-non-go-matrix",
+      "Properties": {
+        "ServiceNamespace": "dynamodb",
+        "ResourceId": "table/go-non-go-matrix/index/GSI_GOAL_ITEM",
+        "ScalableDimension": "dynamodb:index:ReadCapacityUnits",
+        "MinCapacity": 1,
+        "MaxCapacity": 10,
+        "RoleARN": {
+          "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+        }
+      }
+    },
+    "TablegoNonGoMatrixIndexGSIGOALITEMReadCapacityScalingPolicy": {
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+      "DependsOn": "Tablego-non-go-matrixIndexGSI_GOAL_ITEMReadCapacityScalableTarget",
+      "Properties": {
+        "ServiceNamespace": "dynamodb",
+        "ResourceId": "table/go-non-go-matrix/index/GSI_GOAL_ITEM",
+        "ScalableDimension": "dynamodb:index:ReadCapacityUnits",
+        "PolicyName": "go-non-go-matrix-index-GSI_GOAL_ITEM-read-capacity-scaling-policy",
+        "PolicyType": "TargetTrackingScaling",
+        "TargetTrackingScalingPolicyConfiguration": {
+          "PredefinedMetricSpecification": {
+            "PredefinedMetricType": "DynamoDBReadCapacityUtilization"
+          },
+          "ScaleOutCooldown": 60,
+          "ScaleInCooldown": 60,
+          "TargetValue": 70
+        }
+      }
+    },
+    "TablegoNonGoMatrixIndexGSIGOALITEMWriteCapacityScalableTarget": {
+      "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
+      "DependsOn": "go-non-go-matrix",
+      "Properties": {
+        "ServiceNamespace": "dynamodb",
+        "ResourceId": "table/go-non-go-matrix/index/GSI_GOAL_ITEM",
+        "ScalableDimension": "dynamodb:index:WriteCapacityUnits",
+        "MinCapacity": 1,
+        "MaxCapacity": 10,
+        "RoleARN": {
+          "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+        }
+      }
+    },
+    "TablegoNonGoMatrixIndexGSIGOALITEMWriteCapacityScalingPolicy": {
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+      "DependsOn": "Tablego-non-go-matrixIndexGSI_GOAL_ITEMWriteCapacityScalableTarget",
+      "Properties": {
+        "ServiceNamespace": "dynamodb",
+        "ResourceId": "table/go-non-go-matrix/index/GSI_GOAL_ITEM",
+        "ScalableDimension": "dynamodb:index:WriteCapacityUnits",
+        "PolicyName": "go-non-go-matrix-index-GSI_GOAL_ITEM-write-capacity-scaling-policy",
+        "PolicyType": "TargetTrackingScaling",
+        "TargetTrackingScalingPolicyConfiguration": {
+          "PredefinedMetricSpecification": {
+            "PredefinedMetricType": "DynamoDBWriteCapacityUtilization"
+          },
+          "ScaleOutCooldown": 60,
+          "ScaleInCooldown": 60,
+          "TargetValue": 70
+        }
+      }
+    },
+    "TablegoNonGoMatrixIndexGSIJUDGEMENTMATRIXReadCapacityScalableTarget": {
+      "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
+      "DependsOn": "go-non-go-matrix",
+      "Properties": {
+        "ServiceNamespace": "dynamodb",
+        "ResourceId": "table/go-non-go-matrix/index/GSI_JUDGEMENT_MATRIX",
+        "ScalableDimension": "dynamodb:index:ReadCapacityUnits",
+        "MinCapacity": 1,
+        "MaxCapacity": 10,
+        "RoleARN": {
+          "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+        }
+      }
+    },
+    "TablegoNonGoMatrixIndexGSIJUDGEMENTMATRIXReadCapacityScalingPolicy": {
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+      "DependsOn": "Tablego-non-go-matrixIndexGSI_JUDGEMENT_MATRIXReadCapacityScalableTarget",
+      "Properties": {
+        "ServiceNamespace": "dynamodb",
+        "ResourceId": "table/go-non-go-matrix/index/GSI_JUDGEMENT_MATRIX",
+        "ScalableDimension": "dynamodb:index:ReadCapacityUnits",
+        "PolicyName": "go-non-go-matrix-index-GSI_JUDGEMENT_MATRIX-read-capacity-scaling-policy",
+        "PolicyType": "TargetTrackingScaling",
+        "TargetTrackingScalingPolicyConfiguration": {
+          "PredefinedMetricSpecification": {
+            "PredefinedMetricType": "DynamoDBReadCapacityUtilization"
+          },
+          "ScaleOutCooldown": 60,
+          "ScaleInCooldown": 60,
+          "TargetValue": 70
+        }
+      }
+    },
+    "TablegoNonGoMatrixIndexGSIJUDGEMENTMATRIXWriteCapacityScalableTarget": {
+      "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
+      "DependsOn": "go-non-go-matrix",
+      "Properties": {
+        "ServiceNamespace": "dynamodb",
+        "ResourceId": "table/go-non-go-matrix/index/GSI_JUDGEMENT_MATRIX",
+        "ScalableDimension": "dynamodb:index:WriteCapacityUnits",
+        "MinCapacity": 1,
+        "MaxCapacity": 10,
+        "RoleARN": {
+          "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+        }
+      }
+    },
+    "TablegoNonGoMatrixIndexGSIJUDGEMENTMATRIXWriteCapacityScalingPolicy": {
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+      "DependsOn": "Tablego-non-go-matrixIndexGSI_JUDGEMENT_MATRIXWriteCapacityScalableTarget",
+      "Properties": {
+        "ServiceNamespace": "dynamodb",
+        "ResourceId": "table/go-non-go-matrix/index/GSI_JUDGEMENT_MATRIX",
+        "ScalableDimension": "dynamodb:index:WriteCapacityUnits",
+        "PolicyName": "go-non-go-matrix-index-GSI_JUDGEMENT_MATRIX-write-capacity-scaling-policy",
+        "PolicyType": "TargetTrackingScaling",
+        "TargetTrackingScalingPolicyConfiguration": {
+          "PredefinedMetricSpecification": {
+            "PredefinedMetricType": "DynamoDBWriteCapacityUtilization"
+          },
+          "ScaleOutCooldown": 60,
+          "ScaleInCooldown": 60,
+          "TargetValue": 70
+        }
+      }
+    },
+    "TablegoNonGoMatrixIndexGSIITEMSCOREReadCapacityScalableTarget": {
+      "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
+      "DependsOn": "go-non-go-matrix",
+      "Properties": {
+        "ServiceNamespace": "dynamodb",
+        "ResourceId": "table/go-non-go-matrix/index/GSI_ITEM_SCORE",
+        "ScalableDimension": "dynamodb:index:ReadCapacityUnits",
+        "MinCapacity": 1,
+        "MaxCapacity": 10,
+        "RoleARN": {
+          "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+        }
+      }
+    },
+    "TablegoNonGoMatrixIndexGSIITEMSCOREReadCapacityScalingPolicy": {
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+      "DependsOn": "Tablego-non-go-matrixIndexGSI_ITEM_SCOREReadCapacityScalableTarget",
+      "Properties": {
+        "ServiceNamespace": "dynamodb",
+        "ResourceId": "table/go-non-go-matrix/index/GSI_ITEM_SCORE",
+        "ScalableDimension": "dynamodb:index:ReadCapacityUnits",
+        "PolicyName": "go-non-go-matrix-index-GSI_ITEM_SCORE-read-capacity-scaling-policy",
+        "PolicyType": "TargetTrackingScaling",
+        "TargetTrackingScalingPolicyConfiguration": {
+          "PredefinedMetricSpecification": {
+            "PredefinedMetricType": "DynamoDBReadCapacityUtilization"
+          },
+          "ScaleOutCooldown": 60,
+          "ScaleInCooldown": 60,
+          "TargetValue": 70
+        }
+      }
+    },
+    "TablegoNonGoMatrixIndexGSIITEMSCOREWriteCapacityScalableTarget": {
+      "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
+      "DependsOn": "go-non-go-matrix",
+      "Properties": {
+        "ServiceNamespace": "dynamodb",
+        "ResourceId": "table/go-non-go-matrix/index/GSI_ITEM_SCORE",
+        "ScalableDimension": "dynamodb:index:WriteCapacityUnits",
+        "MinCapacity": 1,
+        "MaxCapacity": 10,
+        "RoleARN": {
+          "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+        }
+      }
+    },
+    "TablegoNonGoMatrixIndexGSIITEMSCOREWriteCapacityScalingPolicy": {
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+      "DependsOn": "Tablego-non-go-matrixIndexGSI_ITEM_SCOREWriteCapacityScalableTarget",
+      "Properties": {
+        "ServiceNamespace": "dynamodb",
+        "ResourceId": "table/go-non-go-matrix/index/GSI_ITEM_SCORE",
+        "ScalableDimension": "dynamodb:index:WriteCapacityUnits",
+        "PolicyName": "go-non-go-matrix-index-GSI_ITEM_SCORE-write-capacity-scaling-policy",
+        "PolicyType": "TargetTrackingScaling",
+        "TargetTrackingScalingPolicyConfiguration": {
+          "PredefinedMetricSpecification": {
+            "PredefinedMetricType": "DynamoDBWriteCapacityUtilization"
+          },
+          "ScaleOutCooldown": 60,
+          "ScaleInCooldown": 60,
+          "TargetValue": 70
+        }
+      }
+    }
+  }
+}

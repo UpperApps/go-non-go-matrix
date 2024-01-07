@@ -1,0 +1,741 @@
+{
+  "ModelName": "Go-Non-Go Matrix",
+  "ModelMetadata": {
+    "Author": "Rodrigo Melo",
+    "DateCreated": "Dec 09, 2023, 07:28 AM",
+    "DateLastModified": "Dec 10, 2023, 10:05 AM",
+    "Description": "Data model for the Go-Non-Go Matrix project.",
+    "AWSService": "Amazon DynamoDB",
+    "Version": "3.0"
+  },
+  "DataModel": [
+    {
+      "TableName": "go-non-go-matrix",
+      "KeyAttributes": {
+        "PartitionKey": {
+          "AttributeName": "pk",
+          "AttributeType": "S"
+        },
+        "SortKey": {
+          "AttributeName": "sk",
+          "AttributeType": "S"
+        }
+      },
+      "NonKeyAttributes": [
+        {
+          "AttributeName": "first_name",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "last_name",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "goal_name",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "goal_description",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "max_score",
+          "AttributeType": "N"
+        },
+        {
+          "AttributeName": "criteria_description",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "weight",
+          "AttributeType": "N"
+        },
+        {
+          "AttributeName": "item_name",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "item_description",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "email",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "goal_id",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "criteria_id",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "item_id",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "user_id",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "priority_on",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "score",
+          "AttributeType": "N"
+        },
+        {
+          "AttributeName": "criteria_pair",
+          "AttributeType": "M"
+        },
+        {
+          "AttributeName": "criteria_pair_sk",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "created_time",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "updated_time",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "goal_criteria_sk",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "goal_item_sk",
+          "AttributeType": "S"
+        }
+      ],
+      "GlobalSecondaryIndexes": [
+        {
+          "IndexName": "GSI_GOAL_CRITERIA",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "goal_id",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "goal_criteria_sk",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "INCLUDE",
+            "NonKeyAttributes": [
+              "criteria_description",
+              "weight",
+              "created_time",
+              "updated_time",
+              "criteria_id"
+            ]
+          }
+        },
+        {
+          "IndexName": "GSI_GOAL_ITEM",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "goal_id",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "goal_item_sk",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "INCLUDE",
+            "NonKeyAttributes": [
+              "item_name",
+              "item_description",
+              "created_time",
+              "updated_time",
+              "item_id"
+            ]
+          }
+        },
+        {
+          "IndexName": "GSI_JUDGEMENT_MATRIX",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "goal_id",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "criteria_pair_sk",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "INCLUDE",
+            "NonKeyAttributes": [
+              "criteria_pair",
+              "priority_on",
+              "score",
+              "created_time",
+              "updated_time"
+            ]
+          }
+        },
+        {
+          "IndexName": "GSI_ITEM_SCORE",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "item_id",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "criteria_id",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "INCLUDE",
+            "NonKeyAttributes": [
+              "score",
+              "created_time",
+              "updated_time",
+              "item_name"
+            ]
+          }
+        }
+      ],
+      "TableData": [
+        {
+          "pk": {
+            "S": "USER"
+          },
+          "sk": {
+            "S": "1"
+          },
+          "first_name": {
+            "S": "Rodrigo"
+          },
+          "last_name": {
+            "S": "Melo"
+          },
+          "email": {
+            "S": "rod.melo.ca@gmail.com"
+          },
+          "user_id": {
+            "S": "1"
+          },
+          "created_time": {
+            "S": "1702133710"
+          }
+        },
+        {
+          "pk": {
+            "S": "1#USER"
+          },
+          "sk": {
+            "S": "1#GOAL"
+          },
+          "goal_name": {
+            "S": "Home Purchase"
+          },
+          "goal_description": {
+            "S": "Evaluation to purchase our new home"
+          },
+          "max_score": {
+            "N": "5"
+          },
+          "created_time": {
+            "S": "1702134122"
+          }
+        },
+        {
+          "pk": {
+            "S": "1#GOAL"
+          },
+          "sk": {
+            "S": "1#CRITERIA"
+          },
+          "criteria_description": {
+            "S": "Price bellow 500K CAD"
+          },
+          "weight": {
+            "N": "5"
+          },
+          "goal_id": {
+            "S": "1#GOAL"
+          },
+          "criteria_id": {
+            "S": "1#CRITERIA"
+          },
+          "created_time": {
+            "S": "1702134122"
+          },
+          "goal_criteria_sk": {
+            "S": "1#CRITERIA"
+          }
+        },
+        {
+          "pk": {
+            "S": "1#GOAL"
+          },
+          "sk": {
+            "S": "2#CRITERIA"
+          },
+          "criteria_description": {
+            "S": "It must have at least 3 bedrooms"
+          },
+          "weight": {
+            "N": "7"
+          },
+          "goal_id": {
+            "S": "1#GOAL"
+          },
+          "criteria_id": {
+            "S": "2#CRITERIA"
+          },
+          "created_time": {
+            "S": "1702134122"
+          },
+          "goal_criteria_sk": {
+            "S": "2#CRITERIA"
+          }
+        },
+        {
+          "pk": {
+            "S": "1#GOAL"
+          },
+          "sk": {
+            "S": "3#CRITERIA"
+          },
+          "criteria_description": {
+            "S": "The basement should be finalized"
+          },
+          "weight": {
+            "N": "3"
+          },
+          "goal_id": {
+            "S": "1#GOAL"
+          },
+          "criteria_id": {
+            "S": "3#CRITERIA"
+          },
+          "created_time": {
+            "S": "1702134122"
+          },
+          "goal_criteria_sk": {
+            "S": "3#CRITERIA"
+          }
+        },
+        {
+          "pk": {
+            "S": "1#GOAL"
+          },
+          "sk": {
+            "S": "4#CRITERIA"
+          },
+          "criteria_description": {
+            "S": "It must have a garage for at least one car"
+          },
+          "weight": {
+            "N": "5"
+          },
+          "goal_id": {
+            "S": "1#GOAL"
+          },
+          "criteria_id": {
+            "S": "4#CRITERIA"
+          },
+          "created_time": {
+            "S": "1702134122"
+          },
+          "goal_criteria_sk": {
+            "S": "4#CRITERIA"
+          }
+        },
+        {
+          "pk": {
+            "S": "1#GOAL"
+          },
+          "sk": {
+            "S": "1#ITEM"
+          },
+          "item_name": {
+            "S": "House in Legacy"
+          },
+          "item_description": {
+            "S": "Amazin house we saw in Legacy on Friday"
+          },
+          "goal_id": {
+            "S": "1#GOAL"
+          },
+          "item_id": {
+            "S": "1#ITEM"
+          },
+          "created_time": {
+            "S": "1702134824"
+          },
+          "goal_item_sk": {
+            "S": "1#ITEM"
+          }
+        },
+        {
+          "pk": {
+            "S": "1#GOAL"
+          },
+          "sk": {
+            "S": "2#ITEM"
+          },
+          "item_name": {
+            "S": "House in Mahogany"
+          },
+          "item_description": {
+            "S": "House in front of the Mahogany Lake"
+          },
+          "goal_id": {
+            "S": "1#GOAL"
+          },
+          "item_id": {
+            "S": "2#ITEM"
+          },
+          "created_time": {
+            "S": "1702134859"
+          },
+          "goal_item_sk": {
+            "S": "2#ITEM"
+          }
+        },
+        {
+          "pk": {
+            "S": "1#USER"
+          },
+          "sk": {
+            "S": "2#GOAL"
+          },
+          "goal_name": {
+            "S": "Choose the college program"
+          },
+          "goal_description": {
+            "S": "Evaluate what is the program I'd like to do in the college"
+          },
+          "max_score": {
+            "N": "10"
+          },
+          "created_time": {
+            "S": "1702134122"
+          }
+        },
+        {
+          "pk": {
+            "S": "1#GOAL"
+          },
+          "sk": {
+            "S": "1#CRITERIA:3#CRITERIA"
+          },
+          "goal_id": {
+            "S": "1#GOAL"
+          },
+          "priority_on": {
+            "S": "1#CRITERIA"
+          },
+          "score": {
+            "N": "2"
+          },
+          "criteria_pair": {
+            "M": {
+              "criteria_to_be_rated": {
+                "S": "1#CRITERIA"
+              },
+              "criteria_to_compare": {
+                "S": "3#CRITERIA"
+              }
+            }
+          },
+          "criteria_pair_sk": {
+            "S": "1#CRITERIA:3#CRITERIA"
+          },
+          "created_time": {
+            "S": "1702187354"
+          }
+        },
+        {
+          "pk": {
+            "S": "1#GOAL"
+          },
+          "sk": {
+            "S": "1#CRITERIA:4#CRITERIA"
+          },
+          "goal_id": {
+            "S": "1#GOAL"
+          },
+          "priority_on": {
+            "S": "4#CRITERIA"
+          },
+          "score": {
+            "N": "0.5"
+          },
+          "criteria_pair": {
+            "M": {
+              "criteria_to_be_rated": {
+                "S": "1#CRITERIA"
+              },
+              "criteria_to_compare": {
+                "S": "4#CRITERIA"
+              }
+            }
+          },
+          "criteria_pair_sk": {
+            "S": "1#CRITERIA:4#CRITERIA"
+          },
+          "created_time": {
+            "S": "1702187354"
+          }
+        },
+        {
+          "pk": {
+            "S": "1#GOAL"
+          },
+          "sk": {
+            "S": "1#CRITERIA:2#CRITERIA"
+          },
+          "goal_id": {
+            "S": "1#GOAL"
+          },
+          "priority_on": {
+            "S": "1#CRITERIA"
+          },
+          "score": {
+            "N": "2"
+          },
+          "criteria_pair": {
+            "M": {
+              "criteria_to_be_rated": {
+                "S": "1#CRITERIA"
+              },
+              "criteria_to_compare": {
+                "S": "2#CRITERIA"
+              }
+            }
+          },
+          "criteria_pair_sk": {
+            "S": "1#CRITERIA:2#CRITERIA"
+          },
+          "created_time": {
+            "S": "1702187286"
+          }
+        },
+        {
+          "pk": {
+            "S": "1#GOAL"
+          },
+          "sk": {
+            "S": "1#ITEM:1#CRITERIA"
+          },
+          "goal_id": {
+            "S": "1#GOAL"
+          },
+          "criteria_id": {
+            "S": "1#CRITERIA"
+          },
+          "item_id": {
+            "S": "1#ITEM"
+          },
+          "score": {
+            "N": "9"
+          }
+        },
+        {
+          "pk": {
+            "S": "1#GOAL"
+          },
+          "sk": {
+            "S": "1#ITEM:2#CRITERIA"
+          },
+          "goal_id": {
+            "S": "1#GOAL"
+          },
+          "criteria_id": {
+            "S": "2#CRITERIA"
+          },
+          "item_id": {
+            "S": "1#ITEM"
+          },
+          "score": {
+            "N": "5"
+          }
+        },
+        {
+          "pk": {
+            "S": "1#GOAL"
+          },
+          "sk": {
+            "S": "1#ITEM:3#CRITERIA"
+          },
+          "goal_id": {
+            "S": "1#GOAL"
+          },
+          "criteria_id": {
+            "S": "3#CRITERIA"
+          },
+          "item_id": {
+            "S": "1#ITEM"
+          },
+          "score": {
+            "N": "7"
+          }
+        },
+        {
+          "pk": {
+            "S": "1#GOAL"
+          },
+          "sk": {
+            "S": "1#ITEM:4#CRITERIA"
+          },
+          "goal_id": {
+            "S": "1#GOAL"
+          },
+          "criteria_id": {
+            "S": "4#CRITERIA"
+          },
+          "item_id": {
+            "S": "1#ITEM"
+          },
+          "score": {
+            "N": "10"
+          }
+        },
+        {
+          "pk": {
+            "S": "1#GOAL"
+          },
+          "sk": {
+            "S": "2#ITEM:1#CRITERIA"
+          },
+          "goal_id": {
+            "S": "1#GOAL"
+          },
+          "criteria_id": {
+            "S": "1#CRITERIA"
+          },
+          "item_id": {
+            "S": "2#ITEM"
+          },
+          "score": {
+            "N": "6"
+          }
+        },
+        {
+          "pk": {
+            "S": "1#GOAL"
+          },
+          "sk": {
+            "S": "2#ITEM:2#CRITERIA"
+          },
+          "goal_id": {
+            "S": "1#GOAL"
+          },
+          "criteria_id": {
+            "S": "2#CRITERIA"
+          },
+          "item_id": {
+            "S": "2#ITEM"
+          },
+          "score": {
+            "N": "8"
+          }
+        },
+        {
+          "pk": {
+            "S": "1#GOAL"
+          },
+          "sk": {
+            "S": "2#ITEM:3#CRITERIA"
+          },
+          "goal_id": {
+            "S": "1#GOAL"
+          },
+          "criteria_id": {
+            "S": "3#CRITERIA"
+          },
+          "item_id": {
+            "S": "2#ITEM"
+          },
+          "score": {
+            "N": "10"
+          }
+        },
+        {
+          "pk": {
+            "S": "1#GOAL"
+          },
+          "sk": {
+            "S": "2#ITEM:4#CRITERIA"
+          },
+          "goal_id": {
+            "S": "1#GOAL"
+          },
+          "criteria_id": {
+            "S": "4#CRITERIA"
+          },
+          "item_id": {
+            "S": "2#ITEM"
+          },
+          "score": {
+            "N": "7"
+          }
+        }
+      ],
+      "DataAccess": {
+        "MySql": {}
+      },
+      "SampleDataFormats": {
+        "pk": [
+          "dataTypes",
+          "String"
+        ],
+        "sk": [
+          "dataTypes",
+          "String"
+        ],
+        "First Name": [
+          "identifiers",
+          "First name"
+        ],
+        "created_at": [
+          "date",
+          "Epoc/Unix date format"
+        ],
+        "updated_at": [
+          "date",
+          "Epoc/Unix date format"
+        ]
+      },
+      "BillingMode": "PROVISIONED",
+      "ProvisionedCapacitySettings": {
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5
+        },
+        "AutoScalingRead": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        },
+        "AutoScalingWrite": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        }
+      }
+    }
+  ]
+}

@@ -6,7 +6,10 @@ import { UserRepository } from './domain/user/UserRepository';
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
 import DynamoDBConfig from './infrastructure/config/DynamoDBConfig';
 
-const userRepositoryProvider = { provide: UserRepository, useClass: DynamoUserRepository };
+const userRepositoryProvider = {
+  provide: UserRepository,
+  useClass: DynamoUserRepository,
+};
 
 const dynamoDBDocumentProvider = {
   provide: DynamoDBDocument,
@@ -18,5 +21,4 @@ const dynamoDBDocumentProvider = {
   controllers: [AppController],
   providers: [AppService, userRepositoryProvider, dynamoDBDocumentProvider],
 })
-export class AppModule {
-}
+export class AppModule {}

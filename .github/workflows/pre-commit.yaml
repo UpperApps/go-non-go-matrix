@@ -1,0 +1,63 @@
+name: pre_commit
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - 'main'
+
+jobs:
+  lint_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.10.0'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Start docker compose
+        run: |
+          pip install awscli-local
+          cd localstack
+          chmod +x init.sh
+          sh init.sh
+        shell: bash
+
+      - name: Run Tests
+        run: npm run test
+
+      - name: Stop docker compose
+        run: |
+          cd localstack
+          chmod +x stop.sh
+          sh stop.sh
+        shell: bash
+
+  build:
+    needs: lint_and_test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.10.0'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Build
+        run: npm run build

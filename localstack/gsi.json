@@ -1,0 +1,109 @@
+[
+  {
+    "IndexName": "GSI_GOAL_CRITERIA",
+    "KeySchema": [
+      {
+        "AttributeName": "goal_id",
+        "KeyType": "HASH"
+      },
+      {
+        "AttributeName": "goal_criteria_sk",
+        "KeyType": "RANGE"
+      }
+    ],
+    "Projection": {
+      "ProjectionType": "INCLUDE",
+      "NonKeyAttributes": [
+        "criteria_id",
+        "criteria_description",
+        "weight",
+        "created_time",
+        "updated_time"
+      ]
+    },
+    "ProvisionedThroughput": {
+      "ReadCapacityUnits": 10,
+      "WriteCapacityUnits": 5
+    }
+  },
+  {
+    "IndexName": "GSI_GOAL_ITEM",
+    "KeySchema": [
+      {
+        "AttributeName": "goal_id",
+        "KeyType": "HASH"
+      },
+      {
+        "AttributeName": "goal_item_sk",
+        "KeyType": "RANGE"
+      }
+    ],
+    "Projection": {
+      "ProjectionType": "INCLUDE",
+      "NonKeyAttributes": [
+        "item_id",
+        "item_name",
+        "item_description",
+        "created_time",
+        "updated_time"
+      ]
+    },
+    "ProvisionedThroughput": {
+      "ReadCapacityUnits": 10,
+      "WriteCapacityUnits": 5
+    }
+  },
+  {
+    "IndexName": "GSI_JUDGEMENT_MATRIX",
+    "KeySchema": [
+      {
+        "AttributeName": "goal_id",
+        "KeyType": "HASH"
+      },
+      {
+        "AttributeName": "criteria_pair_sk",
+        "KeyType": "RANGE"
+      }
+    ],
+    "Projection": {
+      "ProjectionType": "INCLUDE",
+      "NonKeyAttributes": [
+        "criteria_pair",
+        "priority_on",
+        "score",
+        "created_time",
+        "updated_time"
+      ]
+    },
+    "ProvisionedThroughput": {
+      "ReadCapacityUnits": 10,
+      "WriteCapacityUnits": 5
+    }
+  },
+  {
+    "IndexName": "GSI_ITEM_SCORE",
+    "KeySchema": [
+      {
+        "AttributeName": "item_id",
+        "KeyType": "HASH"
+      },
+      {
+        "AttributeName": "criteria_id",
+        "KeyType": "RANGE"
+      }
+    ],
+    "Projection": {
+      "ProjectionType": "INCLUDE",
+      "NonKeyAttributes": [
+        "item_name",
+        "score",
+        "created_time",
+        "updated_time"
+      ]
+    },
+    "ProvisionedThroughput": {
+      "ReadCapacityUnits": 10,
+      "WriteCapacityUnits": 5
+    }
+  }
+]

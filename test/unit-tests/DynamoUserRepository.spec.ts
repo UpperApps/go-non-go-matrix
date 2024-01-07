@@ -21,7 +21,8 @@ beforeEach(async () => {
       {
         provide: UserRepository,
         useClass: DynamoUserRepository,
-      }],
+      },
+    ],
   }).compile();
 
   userRepository = testingModule.get<UserRepository>(UserRepository);

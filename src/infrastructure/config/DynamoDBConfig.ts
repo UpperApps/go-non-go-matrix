@@ -15,7 +15,7 @@ class DynamoDBConfig {
     };
     const dynamoDB = new DynamoDB(dynamoDBConfigParams);
     return DynamoDBDocument.from(dynamoDB);
-  };
+  }
 }
 
 export default DynamoDBConfig;

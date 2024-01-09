@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { DynamoDBDocument, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 
 import type { User } from '../../domain/user/user';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { UserRepository } from '../../domain/user/user.repository';
 
 const USER_PK = 'USER';
@@ -10,6 +10,7 @@ const TABLE_NAME = 'go-non-go-matrix';
 
 @Injectable()
 class DynamodbUserRepository implements UserRepository {
+  private readonly logger = new Logger(DynamodbUserRepository.name);
   constructor(private readonly dynamoDBDocument: DynamoDBDocument) {}
 
   async delete(id: string): Promise<void> {
@@ -24,7 +25,7 @@ class DynamodbUserRepository implements UserRepository {
 
       await this.dynamoDBDocument.delete(params);
     } catch (error) {
-      console.error(`Error saving user: ${error}`);
+      this.logger.error(`Error saving user: ${error}`);
     }
   }
 
@@ -53,11 +54,12 @@ class DynamodbUserRepository implements UserRepository {
             email: item.email,
             password: item.password,
             createdAt: new Date(item.createdAt),
+            updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined,
           };
         });
       }
     } catch (error) {
-      console.error(`Error finding users: ${error}`);
+      this.logger.error(`Error finding users: ${error}`);
     }
 
     return users;
@@ -86,10 +88,11 @@ class DynamodbUserRepository implements UserRepository {
           email: item.email,
           password: item.password,
           createdAt: new Date(item.createdAt),
+          updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined,
         };
       }
     } catch (error) {
-      console.error(`Error finding user: ${error}`);
+      this.logger.error(`Error finding user: ${error}`);
     }
 
     return user;
@@ -113,7 +116,7 @@ class DynamodbUserRepository implements UserRepository {
 
       await this.dynamoDBDocument.put(params);
     } catch (error) {
-      console.error(`Error saving user: ${error}`);
+      this.logger.error(`Error saving user: ${error}`);
     }
   }
 
@@ -139,7 +142,7 @@ class DynamodbUserRepository implements UserRepository {
 
       await this.dynamoDBDocument.send(params);
     } catch (error) {
-      console.error(`Error saving user: ${error}`);
+      this.logger.error(`Error saving user: ${error}`);
     }
   }
 }

@@ -1,11 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import DynamodbUserRepository from './infrastructure/repository/dynamodb.user.repository';
 import { UserRepository } from './domain/user/user.repository';
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
 import DynamodbConfig from './infrastructure/config/dynamodb.config';
-import { UserController } from './domain/user/user.controller';
+import { UserController } from './presentation/user.controller';
 
 const dynamoDBDocumentProvider = {
   provide: DynamoDBDocument,
@@ -18,7 +16,7 @@ const userRepositoryProvider = {
 };
 
 @Module({
-  controllers: [AppController, UserController],
-  providers: [AppService, dynamoDBDocumentProvider, userRepositoryProvider],
+  controllers: [UserController],
+  providers: [dynamoDBDocumentProvider, userRepositoryProvider],
 })
 export class AppModule {}

@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
   Inject,
   Logger,
   NotFoundException,
@@ -80,5 +82,11 @@ export class UserController {
     } catch (error) {
       this.logger.error(`Error updating user: ${error}`);
     }
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  async deleteById(@Param('id') id: string): Promise<void> {
+    await this.userRepository.delete(id);
   }
 }

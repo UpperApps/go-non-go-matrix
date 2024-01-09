@@ -8,44 +8,44 @@ import DynamodbUserRepository from '../../src/infrastructure/repository/dynamodb
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
 import DynamodbConfig from '../../src/infrastructure/config/dynamodb.config';
 
-let user: User;
-let userRepository: UserRepository;
+describe('Test User DynamoDB repository', () => {
+  let user: User;
+  let userRepository: UserRepository;
 
-beforeEach(async () => {
-  const testingModule: TestingModule = await Test.createTestingModule({
-    providers: [
-      {
-        provide: DynamoDBDocument,
-        useValue: DynamodbConfig.getDynamoDBDocument(),
-      },
-      {
-        provide: UserRepository,
-        useClass: DynamodbUserRepository,
-      },
-    ],
-  }).compile();
+  beforeEach(async () => {
+    const testingModule: TestingModule = await Test.createTestingModule({
+      providers: [
+        {
+          provide: DynamoDBDocument,
+          useValue: DynamodbConfig.getDynamoDBDocument(),
+        },
+        {
+          provide: UserRepository,
+          useClass: DynamodbUserRepository,
+        },
+      ],
+    }).compile();
 
-  userRepository = testingModule.get<UserRepository>(UserRepository);
+    userRepository = testingModule.get<UserRepository>(UserRepository);
 
-  user = {
-    id: uuidv4(),
-    firstName: faker.person.firstName(),
-    lastName: faker.person.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    createdAt: new Date(),
-  };
-});
+    user = {
+      id: uuidv4(),
+      firstName: faker.person.firstName(),
+      lastName: faker.person.lastName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+      createdAt: new Date(),
+    };
+  });
 
-afterEach(async () => {
-  const users = await userRepository.findAll();
+  afterEach(async () => {
+    const users = await userRepository.findAll();
 
-  for (const user of users) {
-    await userRepository.delete(user.id);
-  }
-});
+    for (const user of users) {
+      await userRepository.delete(user.id);
+    }
+  });
 
-describe('Test User DyanamoDB repository', () => {
   it('should save a user and find it by id', async () => {
     const user: User = {
       id: uuidv4(),

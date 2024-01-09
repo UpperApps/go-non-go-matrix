@@ -1,5 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
-
 export class UserOutDto {
   private readonly id: string;
   private readonly firstName: string;

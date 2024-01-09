@@ -1,10 +1,26 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class UserOutDto {
+  private readonly id: string;
+  private readonly firstName: string;
+  private readonly lastName: string;
+  private readonly email: string;
+  private readonly createdAt: Date;
+  private readonly updatedAt?: Date;
+
   constructor(
-    public readonly id: string,
-    public readonly firstName: string,
-    public readonly lastName: string,
-    public readonly email: string,
-    public readonly createdAt: Date,
-    public readonly updatedAt?: Date,
-  ) {}
+    id: string,
+    firstName: string,
+    lastName: string,
+    email: string,
+    createdAt: Date,
+    updatedAt?: Date,
+  ) {
+    this.id = id;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.email = email;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+  }
 }

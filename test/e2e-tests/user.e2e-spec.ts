@@ -80,4 +80,38 @@ describe('UserController (e2e)', () => {
     expect(response.status).toBe(204);
     expect(spy).toHaveBeenCalledWith(user.id);
   });
+
+  it('/users (POST) should return 201 for a valid user', async () => {
+    const spy = jest.spyOn(userRepository, 'save');
+    const response = await request(app.getHttpServer()).post('/users').send({
+      firstName: faker.person.firstName(),
+      lastName: faker.person.lastName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+    });
+
+    expect(response.status).toBe(201);
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it('/users/:id (PUT) should return 200 for an existent user', async () => {
+    const spy = jest.spyOn(userRepository, 'update');
+    const response = await request(app.getHttpServer())
+      .put(`/users/${user.id}`)
+      .send({
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'johndoe@gmail.com',
+        password: 'jokenpo',
+      });
+
+    expect(response.status).toBe(204);
+    expect(spy).toHaveBeenCalled();
+
+    const updatedUser = await userRepository.findById(user.id);
+    expect(updatedUser.firstName).toEqual('John');
+    expect(updatedUser.lastName).toEqual('Doe');
+    expect(updatedUser.email).toEqual('johndoe@gmail.com');
+    expect(updatedUser.password).toEqual('jokenpo');
+  });
 });

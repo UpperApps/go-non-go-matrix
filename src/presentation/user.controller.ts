@@ -70,6 +70,7 @@ export class UserController {
   }
 
   @Put(':id')
+  @HttpCode(204)
   async update(
     @Param('id') id: string,
     @Body() user: UserInDto,

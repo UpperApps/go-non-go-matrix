@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { v4 as uuidv4 } from 'uuid';
 import { fakerEN as faker } from '@faker-js/faker';
 import { User } from '../../src/domain/user/user';

@@ -5,20 +5,20 @@ import type { User } from '../../domain/user/user';
 import { Injectable, Logger } from '@nestjs/common';
 import { UserRepository } from '../../domain/user/user.repository';
 
-const USER_PK = 'USER';
-const TABLE_NAME = 'go-non-go-matrix';
-
 @Injectable()
 class DynamodbUserRepository implements UserRepository {
   private readonly logger = new Logger(DynamodbUserRepository.name);
+
+  private readonly USER_PK = 'USER';
+  private readonly TABLE_NAME = 'go-non-go-matrix';
   constructor(private readonly dynamoDBDocument: DynamoDBDocument) {}
 
   async delete(id: string): Promise<void> {
     try {
       const params = {
-        TableName: TABLE_NAME,
+        TableName: this.TABLE_NAME,
         Key: {
-          pk: USER_PK,
+          pk: this.USER_PK,
           sk: id,
         },
       };
@@ -34,10 +34,10 @@ class DynamodbUserRepository implements UserRepository {
 
     try {
       const params = {
-        TableName: TABLE_NAME,
+        TableName: this.TABLE_NAME,
         KeyConditionExpression: 'pk = :pk',
         ExpressionAttributeValues: {
-          ':pk': USER_PK,
+          ':pk': this.USER_PK,
         },
         ConsistentRead: true,
       };
@@ -70,9 +70,9 @@ class DynamodbUserRepository implements UserRepository {
 
     try {
       const params = {
-        TableName: TABLE_NAME,
+        TableName: this.TABLE_NAME,
         Key: {
-          pk: USER_PK,
+          pk: this.USER_PK,
           sk: id,
         },
       };
@@ -101,9 +101,9 @@ class DynamodbUserRepository implements UserRepository {
   async save(user: User): Promise<void> {
     try {
       const params = {
-        TableName: TABLE_NAME,
+        TableName: this.TABLE_NAME,
         Item: {
-          pk: USER_PK,
+          pk: this.USER_PK,
           sk: user.id,
           id: user.id,
           firstName: user.firstName,
@@ -123,9 +123,9 @@ class DynamodbUserRepository implements UserRepository {
   async update(id: string, user: User): Promise<void> {
     try {
       const params = new UpdateCommand({
-        TableName: TABLE_NAME,
+        TableName: this.TABLE_NAME,
         Key: {
-          pk: USER_PK,
+          pk: this.USER_PK,
           sk: id,
         },
         UpdateExpression:

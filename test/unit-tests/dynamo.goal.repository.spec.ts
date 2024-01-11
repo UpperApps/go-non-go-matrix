@@ -1,20 +1,17 @@
-import 'reflect-metadata';
 import { v4 as uuidv4 } from 'uuid';
 import { fakerEN as faker } from '@faker-js/faker';
 import { User } from '../../src/domain/user/user';
-import { UserRepository } from '../../src/domain/user/user.repository';
 import { Test, TestingModule } from '@nestjs/testing';
-import DynamodbUserRepository from '../../src/infrastructure/repository/dynamodb.user.repository';
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
 import DynamodbConfig from '../../src/infrastructure/config/dynamodb.config';
 import { Goal } from '../../src/domain/goal/goal';
 import { GoalRepository } from '../../src/domain/goal/goal.repository';
+import { DynamodbGoalRepository } from '../../src/infrastructure/repository/dynamodb.goal.repository';
 
 describe('Test Goal DynamoDB repository', () => {
   let user: User;
   let goal: Goal;
   let goalRepository: GoalRepository;
-  let userRepository: UserRepository;
 
   beforeEach(async () => {
     const testingModule: TestingModule = await Test.createTestingModule({
@@ -25,13 +22,12 @@ describe('Test Goal DynamoDB repository', () => {
         },
         {
           provide: GoalRepository,
-          useClass: DynamodbUserRepository,
+          useClass: DynamodbGoalRepository,
         },
       ],
     }).compile();
 
     goalRepository = testingModule.get<GoalRepository>(GoalRepository);
-    userRepository = testingModule.get<UserRepository>(UserRepository);
 
     user = {
       id: uuidv4(),
@@ -47,27 +43,23 @@ describe('Test Goal DynamoDB repository', () => {
       userId: user.id,
       name: faker.lorem.words(3),
       description: faker.lorem.sentence(),
-      maxScore: faker.number.int(),
+      maxScore: faker.number.int({ min: 5, max: 10 }),
       createdAt: new Date(),
     };
-
-    await userRepository.save(user);
   });
 
   afterEach(async () => {
-    const users = await goalRepository.findAll();
+    const goals = await goalRepository.findAll(user.id);
 
-    for (const user of users) {
-      await goalRepository.delete(user.id);
+    for (const goal of goals) {
+      await goalRepository.delete(goal.id, goal.userId);
     }
-
-    await userRepository.delete(user.id);
   });
 
   it('should save a goal and find it by id', async () => {
     await goalRepository.save(goal);
 
-    const savedGoal = await goalRepository.findById(goal.id);
+    const savedGoal = await goalRepository.findById(goal.id, goal.userId);
 
     expect(savedGoal).toEqual(goal);
   });
@@ -75,31 +67,37 @@ describe('Test Goal DynamoDB repository', () => {
   it('should update a goal', async () => {
     await goalRepository.save(goal);
 
-    const savedUser = (await goalRepository.findById(goal.id)) as Goal;
+    const savedGoal = (await goalRepository.findById(
+      goal.id,
+      goal.userId,
+    )) as Goal;
 
     const goalToUpdate: Goal = {
-      ...savedUser,
-      name: 'Travolta',
+      ...savedGoal,
+      name: 'Goals 2024',
     };
 
-    await goalRepository.update(savedUser.id, goalToUpdate);
+    await goalRepository.update(savedGoal.id, savedGoal.userId, goalToUpdate);
 
-    const updatedGoal = await goalRepository.findById(savedUser.id);
+    const updatedGoal = await goalRepository.findById(
+      savedGoal.id,
+      savedGoal.userId,
+    );
 
-    expect(updatedGoal?.name).toEqual('Travolta');
+    expect(updatedGoal?.name).toEqual('Goals 2024');
     expect(updatedGoal?.updatedAt).not.toBeNull();
   });
 
   it('should delete a goal', async () => {
     await goalRepository.save(goal);
 
-    const savedGoal = await goalRepository.findById(goal.id);
+    const savedGoal = await goalRepository.findById(goal.id, goal.userId);
 
     expect(savedGoal).not.toBeUndefined();
 
-    await goalRepository.delete(goal.id);
+    await goalRepository.delete(goal.id, goal.userId);
 
-    const deletedGoal = await goalRepository.findById(goal.id);
+    const deletedGoal = await goalRepository.findById(goal.id, goal.userId);
 
     expect(deletedGoal).toBeUndefined();
   });
@@ -107,7 +105,7 @@ describe('Test Goal DynamoDB repository', () => {
   it('should find all goals', async () => {
     const anotherGoal: Goal = {
       id: uuidv4(),
-      userId: uuidv4(),
+      userId: user.id,
       name: faker.lorem.word(),
       description: faker.lorem.sentence(),
       maxScore: faker.number.int(),
@@ -117,7 +115,7 @@ describe('Test Goal DynamoDB repository', () => {
     await goalRepository.save(goal);
     await goalRepository.save(anotherGoal);
 
-    const goals = await goalRepository.findAll();
+    const goals = await goalRepository.findAll(user.id);
 
     expect(goals.length).toEqual(2);
   });

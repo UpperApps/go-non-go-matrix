@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { v4 as uuidv4 } from 'uuid';
 import { fakerEN as faker } from '@faker-js/faker';
 import { User } from '../../src/domain/user/user';
@@ -47,15 +46,6 @@ describe('Test User DynamoDB repository', () => {
   });
 
   it('should save a user and find it by id', async () => {
-    const user: User = {
-      id: uuidv4(),
-      firstName: faker.person.firstName(),
-      lastName: faker.person.lastName(),
-      email: faker.internet.email(),
-      password: faker.internet.password(),
-      createdAt: new Date(),
-    };
-
     await userRepository.save(user);
 
     const savedUser = await userRepository.findById(user.id);

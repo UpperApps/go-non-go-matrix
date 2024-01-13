@@ -7,6 +7,8 @@ import { UserController } from './presentation/user.controller';
 import { GoalRepository } from './domain/goal/goal.repository';
 import { DynamodbGoalRepository } from './infrastructure/repository/dynamodb.goal.repository';
 import { GoalController } from './presentation/goal.controller';
+import { DynamodbCriteriaRepository } from './infrastructure/repository/dynamodb.criteria.repository';
+import { CriteriaRepository } from './domain/criteria/criteria.repository';
 
 const dynamoDBDocumentProvider = {
   provide: DynamoDBDocument,
@@ -23,12 +25,18 @@ const goalRepositoryProvider = {
   useClass: DynamodbGoalRepository,
 };
 
+const criteriaRepositoryProvider = {
+  provide: CriteriaRepository,
+  useClass: DynamodbCriteriaRepository,
+};
+
 @Module({
   controllers: [UserController, GoalController],
   providers: [
     dynamoDBDocumentProvider,
     userRepositoryProvider,
     goalRepositoryProvider,
+    criteriaRepositoryProvider,
   ],
 })
 export class AppModule {}

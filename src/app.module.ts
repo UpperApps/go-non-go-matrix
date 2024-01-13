@@ -6,6 +6,7 @@ import DynamodbConfig from './infrastructure/config/dynamodb.config';
 import { UserController } from './presentation/user.controller';
 import { GoalRepository } from './domain/goal/goal.repository';
 import { DynamodbGoalRepository } from './infrastructure/repository/dynamodb.goal.repository';
+import { GoalController } from './presentation/goal.controller';
 
 const dynamoDBDocumentProvider = {
   provide: DynamoDBDocument,
@@ -23,7 +24,7 @@ const goalRepositoryProvider = {
 };
 
 @Module({
-  controllers: [UserController],
+  controllers: [UserController, GoalController],
   providers: [
     dynamoDBDocumentProvider,
     userRepositoryProvider,

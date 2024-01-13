@@ -16,7 +16,9 @@ import { User } from '../domain/user/user';
 import { UserInDto } from './dto/in/user.in.dto';
 import { v4 as uuid } from 'uuid';
 import { UserOutDto } from './dto/out/user.out.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Users')
 @Controller('users')
 export class UserController {
   private readonly logger = new Logger(UserController.name);

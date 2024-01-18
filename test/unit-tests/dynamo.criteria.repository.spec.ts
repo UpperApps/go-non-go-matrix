@@ -45,20 +45,19 @@ describe('Test Goal DynamoDB repository', () => {
       description: faker.lorem.sentence(),
       weight: faker.number.int({ min: 1, max: 10 }),
       createdAt: new Date(),
-      updatedAt: new Date(),
     };
   });
 
   afterEach(async () => {
-    const goals = await criteriaRepository.findAll(goal.id);
+    const criteria = await criteriaRepository.findAll(goal.id);
 
-    for (const goal of goals) {
-      await criteriaRepository.delete(goal.id, goal.goalId);
+    for (const criterion of criteria) {
+      await criteriaRepository.delete(criterion.id, criterion.goalId);
     }
   });
 
   it('should save a criteria and find it by id', async () => {
-    await criteriaRepository.save(criteria);
+    await criteriaRepository.save({ ...criteria, updatedAt: undefined });
 
     const savedCriteria = await criteriaRepository.findById(
       criteria.id,

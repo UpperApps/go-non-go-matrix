@@ -77,7 +77,7 @@ export class DynamodbGoalRepository implements GoalRepository {
         };
       }
     } catch (error) {
-      this.logger.error(`Error finding goal: ${error}`);
+      this.logger.error(`Error finding the goal: ${error}`);
     }
 
     return goal;
@@ -115,7 +115,7 @@ export class DynamodbGoalRepository implements GoalRepository {
 
       await this.dynamoDBDocument.delete(params);
     } catch (error) {
-      this.logger.error(`Error saving goal: ${error}`);
+      this.logger.error(`Error deleting the goal: ${error}`);
     }
   }
 
@@ -146,7 +146,7 @@ export class DynamodbGoalRepository implements GoalRepository {
 
       await this.dynamoDBDocument.send(params);
     } catch (error) {
-      this.logger.error(`Error saving goal: ${error}`);
+      this.logger.error(`Error updating the goal: ${error}`);
     }
   }
 }

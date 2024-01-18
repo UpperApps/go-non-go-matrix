@@ -4,7 +4,9 @@ import {
   IsStrongPassword,
   MinLength,
 } from 'class-validator';
+import ApiSchema from '../../../util/dto-name-decorator';
 
+@ApiSchema({ name: 'in.User' })
 export class UserInDto {
   @IsNotEmpty()
   private readonly firstName: string;

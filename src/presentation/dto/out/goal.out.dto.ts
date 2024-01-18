@@ -1,3 +1,6 @@
+import ApiSchema from '../../../util/dto-name-decorator';
+
+@ApiSchema({ name: 'out.Goal' })
 export class GoalOutDto {
   private readonly id: string;
   private readonly userId: string;

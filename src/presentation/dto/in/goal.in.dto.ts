@@ -1,5 +1,7 @@
 import { IsNotEmpty, Max, MaxLength, Min } from 'class-validator';
+import ApiSchema from '../../../util/dto-name-decorator';
 
+@ApiSchema({ name: 'in.Goal' })
 export class GoalInDto {
   @IsNotEmpty()
   @MaxLength(50)

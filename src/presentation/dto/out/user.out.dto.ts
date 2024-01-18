@@ -1,3 +1,6 @@
+import ApiSchema from '../../../util/dto-name-decorator';
+
+@ApiSchema({ name: 'out.User' })
 export class UserOutDto {
   private readonly id: string;
   private readonly firstName: string;

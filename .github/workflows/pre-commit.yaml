@@ -34,8 +34,11 @@ jobs:
           sh init.sh
         shell: bash
 
-      - name: Run Tests
+      - name: Run Unit Tests
         run: npm run test
+
+      - name: Run E2E Tests
+        run: npm run test:e2e
 
       - name: Stop docker compose
         run: |

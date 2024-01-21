@@ -5,6 +5,6 @@ export class Criteria {
     public readonly description: string,
     public readonly weight: number,
     public readonly createdAt: Date,
-    public readonly updatedAt?: Date,
+    public readonly updatedAt?: Date
   ) {}
 }

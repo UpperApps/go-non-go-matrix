@@ -14,7 +14,7 @@ describe('GoalController (e2e)', () => {
 
   beforeEach(async () => {
     const testingModule: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule]
     }).compile();
 
     goalRepository = testingModule.get<GoalRepository>(GoalRepository);
@@ -25,7 +25,7 @@ describe('GoalController (e2e)', () => {
       name: faker.lorem.words(3),
       description: faker.lorem.sentence(10),
       maxScore: faker.number.int({ min: 1, max: 10 }),
-      createdAt: new Date(),
+      createdAt: new Date()
     };
 
     app = testingModule.createNestApplication();
@@ -44,18 +44,14 @@ describe('GoalController (e2e)', () => {
   });
 
   it('/users/userId/goals (GET) should return a list of goals', async () => {
-    const response = await request(app.getHttpServer()).get(
-      `/users/${goal.userId}/goals`,
-    );
+    const response = await request(app.getHttpServer()).get(`/users/${goal.userId}/goals`);
 
     expect(response.status).toBe(200);
     expect(response.body.length).toEqual(1);
   });
 
   it('/users/:userId/goals/:id (GET) should return 200 for an existent goal', async () => {
-    const response = await request(app.getHttpServer()).get(
-      `/users/${goal.userId}/goals/${goal.id}`,
-    );
+    const response = await request(app.getHttpServer()).get(`/users/${goal.userId}/goals/${goal.id}`);
 
     expect(response.status).toBe(200);
     expect(response.body.id).toEqual(goal.id);
@@ -68,18 +64,14 @@ describe('GoalController (e2e)', () => {
   });
 
   it('/users/:userId/goals/:id (GET) should return 404 for an non existent goal', async () => {
-    const response = await request(app.getHttpServer()).get(
-      `/users/${goal.userId}/goals/1234`,
-    );
+    const response = await request(app.getHttpServer()).get(`/users/${goal.userId}/goals/1234`);
 
     expect(response.status).toBe(404);
   });
 
   it('/users/:userId/goals/:id (DELETE) should return 204 for an existent goal', async () => {
     const spy = jest.spyOn(goalRepository, 'delete');
-    const response = await request(app.getHttpServer()).delete(
-      `/users/${goal.userId}/goals/${goal.id}`,
-    );
+    const response = await request(app.getHttpServer()).delete(`/users/${goal.userId}/goals/${goal.id}`);
 
     expect(response.status).toBe(204);
     expect(spy).toHaveBeenCalledWith(goal.id, goal.userId);
@@ -91,7 +83,7 @@ describe('GoalController (e2e)', () => {
       .post(`/users/${goal.userId}/goals`)
       .send({
         ...goal,
-        id: undefined,
+        id: undefined
       });
 
     expect(response.status).toBe(201);
@@ -100,13 +92,11 @@ describe('GoalController (e2e)', () => {
 
   it('/users/:userId/goals/:id (PUT) should return 200 for an existent goal', async () => {
     const spy = jest.spyOn(goalRepository, 'update');
-    const response = await request(app.getHttpServer())
-      .put(`/users/${goal.userId}/goals/${goal.id}`)
-      .send({
-        name: 'Lero lero',
-        description: 'Lero lero',
-        maxScore: 10,
-      });
+    const response = await request(app.getHttpServer()).put(`/users/${goal.userId}/goals/${goal.id}`).send({
+      name: 'Lero lero',
+      description: 'Lero lero',
+      maxScore: 10
+    });
 
     expect(response.status).toBe(204);
     expect(spy).toHaveBeenCalled();

@@ -9,7 +9,7 @@ import {
   NotFoundException,
   Param,
   Post,
-  Put,
+  Put
 } from '@nestjs/common';
 import { GoalRepository } from '../domain/goal/goal.repository';
 import { GoalOutDto } from './dto/out/goal.out.dto';
@@ -23,9 +23,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class GoalController {
   private readonly logger = new Logger(GoalController.name);
 
-  constructor(
-    @Inject(GoalRepository) private readonly goalRepository: GoalRepository,
-  ) {}
+  constructor(@Inject(GoalRepository) private readonly goalRepository: GoalRepository) {}
 
   @Get()
   async findAll(@Param('userId') userId: string): Promise<GoalOutDto[]> {
@@ -39,17 +37,14 @@ export class GoalController {
             goal.description,
             goal.maxScore,
             goal.createdAt,
-            goal.updatedAt,
-          ),
+            goal.updatedAt
+          )
       );
     });
   }
 
   @Get(':id')
-  async findById(
-    @Param('id') id: string,
-    @Param('userId') userId: string,
-  ): Promise<GoalOutDto> {
+  async findById(@Param('id') id: string, @Param('userId') userId: string): Promise<GoalOutDto> {
     const goal = await this.goalRepository.findById(id, userId);
 
     if (goal === undefined) {
@@ -63,15 +58,12 @@ export class GoalController {
       goal.description,
       goal.maxScore,
       goal.createdAt,
-      goal.updatedAt,
+      goal.updatedAt
     );
   }
 
   @Post()
-  async create(
-    @Body() goal: GoalInDto,
-    @Param('userId') userId: string,
-  ): Promise<void> {
+  async create(@Body() goal: GoalInDto, @Param('userId') userId: string): Promise<void> {
     const id = uuid();
     const createdAt = new Date();
 
@@ -82,11 +74,7 @@ export class GoalController {
 
   @Put(':id')
   @HttpCode(204)
-  async update(
-    @Param('id') id: string,
-    @Param('userId') userId: string,
-    @Body() goal: GoalInDto,
-  ): Promise<void> {
+  async update(@Param('id') id: string, @Param('userId') userId: string, @Body() goal: GoalInDto): Promise<void> {
     try {
       const goalFromDB = await this.goalRepository.findById(id, userId);
       const goalToUpdate = { ...goalFromDB, ...goal } as Goal;
@@ -99,10 +87,7 @@ export class GoalController {
 
   @Delete(':id')
   @HttpCode(204)
-  async deleteById(
-    @Param('id') id: string,
-    @Param('userId') userId: string,
-  ): Promise<void> {
+  async deleteById(@Param('id') id: string, @Param('userId') userId: string): Promise<void> {
     await this.goalRepository.delete(id, userId);
   }
 }

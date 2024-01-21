@@ -9,14 +9,7 @@ export class CriteriaOutDto {
   public readonly createdAt: Date;
   public readonly updatedAt?: Date;
 
-  constructor(
-    id: string,
-    goalId: string,
-    description: string,
-    weight: number,
-    createdAt: Date,
-    updatedAt?: Date,
-  ) {
+  constructor(id: string, goalId: string, description: string, weight: number, createdAt: Date, updatedAt?: Date) {
     this.id = id;
     this.goalId = goalId;
     this.description = description;

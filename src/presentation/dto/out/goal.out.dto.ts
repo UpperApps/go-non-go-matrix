@@ -17,7 +17,7 @@ export class GoalOutDto {
     description: string,
     maxScore: number,
     createdAt: Date,
-    updatedAt?: Date,
+    updatedAt?: Date
   ) {
     this.id = id;
     this.userId = userId;

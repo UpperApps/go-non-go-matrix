@@ -19,8 +19,8 @@ class DynamodbUserRepository implements UserRepository {
         TableName: this.TABLE_NAME,
         Key: {
           pk: this.USER_PK,
-          sk: id,
-        },
+          sk: id
+        }
       };
 
       await this.dynamoDBDocument.delete(params);
@@ -37,9 +37,9 @@ class DynamodbUserRepository implements UserRepository {
         TableName: this.TABLE_NAME,
         KeyConditionExpression: 'pk = :pk',
         ExpressionAttributeValues: {
-          ':pk': this.USER_PK,
+          ':pk': this.USER_PK
         },
-        ConsistentRead: true,
+        ConsistentRead: true
       };
 
       const data = await this.dynamoDBDocument.query(params);
@@ -54,7 +54,7 @@ class DynamodbUserRepository implements UserRepository {
             email: item.email,
             password: item.password,
             createdAt: new Date(item.createdAt),
-            updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined,
+            updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined
           };
         });
       }
@@ -73,8 +73,8 @@ class DynamodbUserRepository implements UserRepository {
         TableName: this.TABLE_NAME,
         Key: {
           pk: this.USER_PK,
-          sk: id,
-        },
+          sk: id
+        }
       };
 
       const data = await this.dynamoDBDocument.get(params);
@@ -88,7 +88,7 @@ class DynamodbUserRepository implements UserRepository {
           email: item.email,
           password: item.password,
           createdAt: new Date(item.createdAt),
-          updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined,
+          updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined
         };
       }
     } catch (error) {
@@ -110,8 +110,8 @@ class DynamodbUserRepository implements UserRepository {
           lastName: user.lastName,
           email: user.email,
           password: user.password,
-          createdAt: user.createdAt.toISOString(),
-        },
+          createdAt: user.createdAt.toISOString()
+        }
       };
 
       await this.dynamoDBDocument.put(params);
@@ -126,7 +126,7 @@ class DynamodbUserRepository implements UserRepository {
         TableName: this.TABLE_NAME,
         Key: {
           pk: this.USER_PK,
-          sk: id,
+          sk: id
         },
         UpdateExpression:
           'SET firstName = :firstName, lastName = :lastName, email = :email, password = :password, updatedAt = :updatedAt',
@@ -135,9 +135,9 @@ class DynamodbUserRepository implements UserRepository {
           ':lastName': user.lastName,
           ':email': user.email,
           ':password': user.password,
-          ':updatedAt': new Date().toISOString(),
+          ':updatedAt': new Date().toISOString()
         },
-        ReturnValues: 'ALL_NEW',
+        ReturnValues: 'ALL_NEW'
       });
 
       await this.dynamoDBDocument.send(params);

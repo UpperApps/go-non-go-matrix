@@ -6,6 +6,6 @@ export class Goal {
     public description: string,
     public maxScore: number,
     public createdAt: Date,
-    public updatedAt?: Date,
+    public updatedAt?: Date
   ) {}
 }

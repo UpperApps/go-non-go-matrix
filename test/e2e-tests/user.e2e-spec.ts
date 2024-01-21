@@ -14,7 +14,7 @@ describe('UserController (e2e)', () => {
 
   beforeEach(async () => {
     const testingModule: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule]
     }).compile();
 
     userRepository = testingModule.get<UserRepository>(UserRepository);
@@ -25,7 +25,7 @@ describe('UserController (e2e)', () => {
       lastName: faker.person.lastName(),
       email: faker.internet.email(),
       password: faker.internet.password(),
-      createdAt: new Date(),
+      createdAt: new Date()
     };
 
     app = testingModule.createNestApplication();
@@ -51,9 +51,7 @@ describe('UserController (e2e)', () => {
   });
 
   it('/users/:id (GET) should return 200 for an existent user', async () => {
-    const response = await request(app.getHttpServer()).get(
-      `/users/${user.id}`,
-    );
+    const response = await request(app.getHttpServer()).get(`/users/${user.id}`);
 
     expect(response.status).toBe(200);
     expect(response.body.id).toEqual(user.id);
@@ -73,9 +71,7 @@ describe('UserController (e2e)', () => {
 
   it('/users/:id (DELETE) should return 204 for an existent user', async () => {
     const spy = jest.spyOn(userRepository, 'delete');
-    const response = await request(app.getHttpServer()).delete(
-      `/users/${user.id}`,
-    );
+    const response = await request(app.getHttpServer()).delete(`/users/${user.id}`);
 
     expect(response.status).toBe(204);
     expect(spy).toHaveBeenCalledWith(user.id);
@@ -87,7 +83,7 @@ describe('UserController (e2e)', () => {
       firstName: faker.person.firstName(),
       lastName: faker.person.lastName(),
       email: faker.internet.email(),
-      password: faker.internet.password(),
+      password: faker.internet.password()
     });
 
     expect(response.status).toBe(201);
@@ -96,14 +92,12 @@ describe('UserController (e2e)', () => {
 
   it('/users/:id (PUT) should return 200 for an existent user', async () => {
     const spy = jest.spyOn(userRepository, 'update');
-    const response = await request(app.getHttpServer())
-      .put(`/users/${user.id}`)
-      .send({
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'johndoe@gmail.com',
-        password: 'jokenpo',
-      });
+    const response = await request(app.getHttpServer()).put(`/users/${user.id}`).send({
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'johndoe@gmail.com',
+      password: 'jokenpo'
+    });
 
     expect(response.status).toBe(204);
     expect(spy).toHaveBeenCalled();

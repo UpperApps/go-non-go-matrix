@@ -24,8 +24,8 @@ export class DynamodbCriteriaRepository implements CriteriaRepository {
         TableName: this.TABLE_NAME,
         Key: {
           pk: this.CRITERIA_PK(goalId),
-          sk: this.CRITERIA_SK(id),
-        },
+          sk: this.CRITERIA_SK(id)
+        }
       };
 
       await this.dynamoDBDocument.delete(params);
@@ -43,9 +43,9 @@ export class DynamodbCriteriaRepository implements CriteriaRepository {
         IndexName: 'GSI_GOAL_CRITERIA',
         KeyConditionExpression: 'goalId = :goalId',
         ExpressionAttributeValues: {
-          ':goalId': goalId,
+          ':goalId': goalId
         },
-        ConsistentRead: false,
+        ConsistentRead: false
       };
 
       const data = await this.dynamoDBDocument.query(params);
@@ -59,7 +59,7 @@ export class DynamodbCriteriaRepository implements CriteriaRepository {
             description: item.description,
             weight: item.weight,
             createdAt: new Date(item.createdAt),
-            updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined,
+            updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined
           };
         });
       }
@@ -79,8 +79,8 @@ export class DynamodbCriteriaRepository implements CriteriaRepository {
         IndexName: 'GSI_GOAL_CRITERIA',
         Key: {
           pk: this.CRITERIA_PK(goalId),
-          sk: this.CRITERIA_SK(id),
-        },
+          sk: this.CRITERIA_SK(id)
+        }
       };
 
       const data = await this.dynamoDBDocument.get(params);
@@ -93,7 +93,7 @@ export class DynamodbCriteriaRepository implements CriteriaRepository {
           description: item.description,
           weight: item.weight,
           createdAt: new Date(item.createdAt),
-          updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined,
+          updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined
         };
       }
     } catch (error) {
@@ -114,8 +114,8 @@ export class DynamodbCriteriaRepository implements CriteriaRepository {
           goalId: criteria.goalId,
           description: criteria.description,
           weight: criteria.weight,
-          createdAt: criteria.createdAt.toISOString(),
-        },
+          createdAt: criteria.createdAt.toISOString()
+        }
       };
 
       await this.dynamoDBDocument.put(params);
@@ -130,21 +130,20 @@ export class DynamodbCriteriaRepository implements CriteriaRepository {
         TableName: this.TABLE_NAME,
         Key: {
           pk: this.CRITERIA_PK(goalId),
-          sk: this.CRITERIA_SK(id),
+          sk: this.CRITERIA_SK(id)
         },
-        UpdateExpression:
-          'SET #d = :description, #w = :weight, #u = :updatedAt',
+        UpdateExpression: 'SET #d = :description, #w = :weight, #u = :updatedAt',
         ExpressionAttributeNames: {
           '#d': 'description',
           '#w': 'weight',
-          '#u': 'updatedAt',
+          '#u': 'updatedAt'
         },
         ExpressionAttributeValues: {
           ':description': criteria.description,
           ':weight': criteria.weight,
-          ':updatedAt': new Date().toISOString(),
+          ':updatedAt': new Date().toISOString()
         },
-        ReturnValues: 'ALL_NEW',
+        ReturnValues: 'ALL_NEW'
       });
 
       await this.dynamoDBDocument.send(params);

@@ -9,7 +9,7 @@ import {
   NotFoundException,
   Param,
   Post,
-  Put,
+  Put
 } from '@nestjs/common';
 import { UserRepository } from '../domain/user/user.repository';
 import { User } from '../domain/user/user';
@@ -23,23 +23,13 @@ import { ApiTags } from '@nestjs/swagger';
 export class UserController {
   private readonly logger = new Logger(UserController.name);
 
-  constructor(
-    @Inject(UserRepository) private readonly userRepository: UserRepository,
-  ) {}
+  constructor(@Inject(UserRepository) private readonly userRepository: UserRepository) {}
 
   @Get()
   async findAll(): Promise<UserOutDto[]> {
     return await this.userRepository.findAll().then((users) => {
       return users.map(
-        (user) =>
-          new UserOutDto(
-            user.id,
-            user.firstName,
-            user.lastName,
-            user.email,
-            user.createdAt,
-            user.updatedAt,
-          ),
+        (user) => new UserOutDto(user.id, user.firstName, user.lastName, user.email, user.createdAt, user.updatedAt)
       );
     });
   }
@@ -52,14 +42,7 @@ export class UserController {
       throw new NotFoundException(`User with id ${id} not found`);
     }
 
-    return new UserOutDto(
-      user.id,
-      user.firstName,
-      user.lastName,
-      user.email,
-      user.createdAt,
-      user.updatedAt,
-    );
+    return new UserOutDto(user.id, user.firstName, user.lastName, user.email, user.createdAt, user.updatedAt);
   }
 
   @Post()
@@ -73,10 +56,7 @@ export class UserController {
 
   @Put(':id')
   @HttpCode(204)
-  async update(
-    @Param('id') id: string,
-    @Body() user: UserInDto,
-  ): Promise<void> {
+  async update(@Param('id') id: string, @Body() user: UserInDto): Promise<void> {
     try {
       const userFromDB = await this.userRepository.findById(id);
       const userToUpdate = { ...userFromDB, ...user } as User;

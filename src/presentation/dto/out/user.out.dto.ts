@@ -9,14 +9,7 @@ export class UserOutDto {
   private readonly createdAt: Date;
   private readonly updatedAt?: Date;
 
-  constructor(
-    id: string,
-    firstName: string,
-    lastName: string,
-    email: string,
-    createdAt: Date,
-    updatedAt?: Date,
-  ) {
+  constructor(id: string, firstName: string, lastName: string, email: string, createdAt: Date, updatedAt?: Date) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;

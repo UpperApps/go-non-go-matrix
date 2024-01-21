@@ -23,9 +23,9 @@ export class DynamodbGoalRepository implements GoalRepository {
         TableName: this.TABLE_NAME,
         KeyConditionExpression: 'pk = :pk',
         ExpressionAttributeValues: {
-          ':pk': this.GOAL_PK(userId),
+          ':pk': this.GOAL_PK(userId)
         },
-        ConsistentRead: true,
+        ConsistentRead: true
       };
 
       const data = await this.dynamoDBDocument.query(params);
@@ -40,7 +40,7 @@ export class DynamodbGoalRepository implements GoalRepository {
             description: item.description,
             maxScore: item.maxScore,
             createdAt: new Date(item.createdAt),
-            updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined,
+            updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined
           };
         });
       }
@@ -58,8 +58,8 @@ export class DynamodbGoalRepository implements GoalRepository {
         TableName: this.TABLE_NAME,
         Key: {
           pk: this.GOAL_PK(userId),
-          sk: this.GOAL_SK(id),
-        },
+          sk: this.GOAL_SK(id)
+        }
       };
 
       const data = await this.dynamoDBDocument.get(params);
@@ -73,7 +73,7 @@ export class DynamodbGoalRepository implements GoalRepository {
           description: item.description,
           maxScore: item.maxScore,
           createdAt: new Date(item.createdAt),
-          updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined,
+          updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined
         };
       }
     } catch (error) {
@@ -94,8 +94,8 @@ export class DynamodbGoalRepository implements GoalRepository {
           name: goal.name,
           description: goal.description,
           maxScore: goal.maxScore,
-          createdAt: goal.createdAt.toISOString(),
-        },
+          createdAt: goal.createdAt.toISOString()
+        }
       };
 
       await this.dynamoDBDocument.put(params);
@@ -109,8 +109,8 @@ export class DynamodbGoalRepository implements GoalRepository {
         TableName: this.TABLE_NAME,
         Key: {
           pk: this.GOAL_PK(userId),
-          sk: this.GOAL_SK(id),
-        },
+          sk: this.GOAL_SK(id)
+        }
       };
 
       await this.dynamoDBDocument.delete(params);
@@ -125,23 +125,22 @@ export class DynamodbGoalRepository implements GoalRepository {
         TableName: this.TABLE_NAME,
         Key: {
           pk: this.GOAL_PK(userId),
-          sk: this.GOAL_SK(id),
+          sk: this.GOAL_SK(id)
         },
-        UpdateExpression:
-          'SET #n = :name, #d = :description, #ms = :maxScore, #u = :updatedAt',
+        UpdateExpression: 'SET #n = :name, #d = :description, #ms = :maxScore, #u = :updatedAt',
         ExpressionAttributeNames: {
           '#n': 'name',
           '#d': 'description',
           '#ms': 'maxScore',
-          '#u': 'updatedAt',
+          '#u': 'updatedAt'
         },
         ExpressionAttributeValues: {
           ':name': goal.name,
           ':description': goal.description,
           ':maxScore': goal.maxScore,
-          ':updatedAt': new Date().toISOString(),
+          ':updatedAt': new Date().toISOString()
         },
-        ReturnValues: 'ALL_NEW',
+        ReturnValues: 'ALL_NEW'
       });
 
       await this.dynamoDBDocument.send(params);

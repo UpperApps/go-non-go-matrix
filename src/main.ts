@@ -8,11 +8,7 @@ async function bootstrap() {
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Go-Non-Go Matrix API Documentation')
-    .setContact(
-      'Rodrigo Melo',
-      'https://github.com/UpperApps',
-      'upperapps@gmail.com',
-    )
+    .setContact('Rodrigo Melo', 'https://github.com/UpperApps', 'upperapps@gmail.com')
     .setDescription('API Documentation for Go-Non-Go Matrix')
     .setLicense('GNU', 'https://www.gnu.org/licenses/gpl-3.0.pt-br.html')
     .setVersion('1.0')
@@ -24,7 +20,7 @@ async function bootstrap() {
   const validationPipe = new ValidationPipe({
     transform: true,
     whitelist: true,
-    forbidNonWhitelisted: true,
+    forbidNonWhitelisted: true
   });
 
   app.useGlobalPipes(validationPipe);

@@ -16,13 +16,13 @@ describe('Test User DynamoDB repository', () => {
       providers: [
         {
           provide: DynamoDBDocument,
-          useValue: DynamodbConfig.getDynamoDBDocument(),
+          useValue: DynamodbConfig.getDynamoDBDocument()
         },
         {
           provide: UserRepository,
-          useClass: DynamodbUserRepository,
-        },
-      ],
+          useClass: DynamodbUserRepository
+        }
+      ]
     }).compile();
 
     userRepository = testingModule.get<UserRepository>(UserRepository);
@@ -33,7 +33,7 @@ describe('Test User DynamoDB repository', () => {
       lastName: faker.person.lastName(),
       email: faker.internet.email(),
       password: faker.internet.password(),
-      createdAt: new Date(),
+      createdAt: new Date()
     };
   });
 
@@ -60,7 +60,7 @@ describe('Test User DynamoDB repository', () => {
 
     const userToUpdate: User = {
       ...savedUser,
-      lastName: 'Travolta',
+      lastName: 'Travolta'
     };
 
     await userRepository.update(savedUser.id, userToUpdate);
@@ -92,7 +92,7 @@ describe('Test User DynamoDB repository', () => {
       lastName: faker.person.lastName(),
       email: faker.internet.email(),
       password: faker.internet.password(),
-      createdAt: new Date(),
+      createdAt: new Date()
     };
 
     await userRepository.save(user);

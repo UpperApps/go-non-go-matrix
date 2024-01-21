@@ -1,9 +1,4 @@
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsStrongPassword,
-  MinLength,
-} from 'class-validator';
+import { IsEmail, IsNotEmpty, IsStrongPassword, MinLength } from 'class-validator';
 import ApiSchema from '../../../util/dto-name-decorator';
 
 @ApiSchema({ name: 'in.User' })
@@ -23,12 +18,7 @@ export class UserInDto {
   @MinLength(8)
   private readonly password: string;
 
-  constructor(
-    firstName: string,
-    lastName: string,
-    email: string,
-    password: string,
-  ) {
+  constructor(firstName: string, lastName: string, email: string, password: string) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;

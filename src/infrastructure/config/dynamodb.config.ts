@@ -10,8 +10,8 @@ class DynamodbConfig {
       endpoint: 'http://localhost:4566',
       credentials: {
         accessKeyId: 'test',
-        secretAccessKey: 'test',
-      },
+        secretAccessKey: 'test'
+      }
     };
     const dynamoDB = new DynamoDB(dynamoDBConfigParams);
     return DynamoDBDocument.from(dynamoDB);

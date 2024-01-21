@@ -13,31 +13,26 @@ import { CriteriaController } from './presentation/criteria.controller';
 
 const dynamoDBDocumentProvider = {
   provide: DynamoDBDocument,
-  useValue: DynamodbConfig.getDynamoDBDocument(),
+  useValue: DynamodbConfig.getDynamoDBDocument()
 };
 
 const userRepositoryProvider = {
   provide: UserRepository,
-  useClass: DynamodbUserRepository,
+  useClass: DynamodbUserRepository
 };
 
 const goalRepositoryProvider = {
   provide: GoalRepository,
-  useClass: DynamodbGoalRepository,
+  useClass: DynamodbGoalRepository
 };
 
 const criteriaRepositoryProvider = {
   provide: CriteriaRepository,
-  useClass: DynamodbCriteriaRepository,
+  useClass: DynamodbCriteriaRepository
 };
 
 @Module({
   controllers: [UserController, GoalController, CriteriaController],
-  providers: [
-    dynamoDBDocumentProvider,
-    userRepositoryProvider,
-    goalRepositoryProvider,
-    criteriaRepositoryProvider,
-  ],
+  providers: [dynamoDBDocumentProvider, userRepositoryProvider, goalRepositoryProvider, criteriaRepositoryProvider]
 })
 export class AppModule {}

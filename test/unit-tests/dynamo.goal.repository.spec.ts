@@ -18,13 +18,13 @@ describe('Test Goal DynamoDB repository', () => {
       providers: [
         {
           provide: DynamoDBDocument,
-          useValue: DynamodbConfig.getDynamoDBDocument(),
+          useValue: DynamodbConfig.getDynamoDBDocument()
         },
         {
           provide: GoalRepository,
-          useClass: DynamodbGoalRepository,
-        },
-      ],
+          useClass: DynamodbGoalRepository
+        }
+      ]
     }).compile();
 
     goalRepository = testingModule.get<GoalRepository>(GoalRepository);
@@ -35,7 +35,7 @@ describe('Test Goal DynamoDB repository', () => {
       lastName: faker.person.lastName(),
       email: faker.internet.email(),
       password: faker.internet.password(),
-      createdAt: new Date(),
+      createdAt: new Date()
     };
 
     goal = {
@@ -44,7 +44,7 @@ describe('Test Goal DynamoDB repository', () => {
       name: faker.lorem.words(3),
       description: faker.lorem.sentence(),
       maxScore: faker.number.int({ min: 5, max: 10 }),
-      createdAt: new Date(),
+      createdAt: new Date()
     };
   });
 
@@ -67,22 +67,16 @@ describe('Test Goal DynamoDB repository', () => {
   it('should update a goal', async () => {
     await goalRepository.save(goal);
 
-    const savedGoal = (await goalRepository.findById(
-      goal.id,
-      goal.userId,
-    )) as Goal;
+    const savedGoal = (await goalRepository.findById(goal.id, goal.userId)) as Goal;
 
     const goalToUpdate: Goal = {
       ...savedGoal,
-      name: 'Goals 2024',
+      name: 'Goals 2024'
     };
 
     await goalRepository.update(savedGoal.id, savedGoal.userId, goalToUpdate);
 
-    const updatedGoal = await goalRepository.findById(
-      savedGoal.id,
-      savedGoal.userId,
-    );
+    const updatedGoal = await goalRepository.findById(savedGoal.id, savedGoal.userId);
 
     expect(updatedGoal?.name).toEqual('Goals 2024');
     expect(updatedGoal?.updatedAt).not.toBeNull();
@@ -109,7 +103,7 @@ describe('Test Goal DynamoDB repository', () => {
       name: faker.lorem.word(),
       description: faker.lorem.sentence(),
       maxScore: faker.number.int(),
-      createdAt: new Date(),
+      createdAt: new Date()
     };
 
     await goalRepository.save(goal);

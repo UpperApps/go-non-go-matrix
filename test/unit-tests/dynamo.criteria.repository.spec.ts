@@ -18,17 +18,16 @@ describe('Test Goal DynamoDB repository', () => {
       providers: [
         {
           provide: DynamoDBDocument,
-          useValue: DynamodbConfig.getDynamoDBDocument(),
+          useValue: DynamodbConfig.getDynamoDBDocument()
         },
         {
           provide: CriteriaRepository,
-          useClass: DynamodbCriteriaRepository,
-        },
-      ],
+          useClass: DynamodbCriteriaRepository
+        }
+      ]
     }).compile();
 
-    criteriaRepository =
-      testingModule.get<CriteriaRepository>(CriteriaRepository);
+    criteriaRepository = testingModule.get<CriteriaRepository>(CriteriaRepository);
 
     goal = {
       id: uuidv4(),
@@ -36,7 +35,7 @@ describe('Test Goal DynamoDB repository', () => {
       name: faker.lorem.words(3),
       description: faker.lorem.sentence(),
       maxScore: faker.number.int({ min: 5, max: 10 }),
-      createdAt: new Date(),
+      createdAt: new Date()
     };
 
     criteria = {
@@ -44,7 +43,7 @@ describe('Test Goal DynamoDB repository', () => {
       goalId: goal.id,
       description: faker.lorem.sentence(),
       weight: faker.number.int({ min: 1, max: 10 }),
-      createdAt: new Date(),
+      createdAt: new Date()
     };
   });
 
@@ -59,10 +58,7 @@ describe('Test Goal DynamoDB repository', () => {
   it('should save a criteria and find it by id', async () => {
     await criteriaRepository.save({ ...criteria, updatedAt: undefined });
 
-    const savedCriteria = await criteriaRepository.findById(
-      criteria.id,
-      criteria.goalId,
-    );
+    const savedCriteria = await criteriaRepository.findById(criteria.id, criteria.goalId);
 
     expect(savedCriteria).toEqual(criteria);
   });
@@ -70,26 +66,16 @@ describe('Test Goal DynamoDB repository', () => {
   it('should update a criteria', async () => {
     await criteriaRepository.save(criteria);
 
-    const savedCriteria = (await criteriaRepository.findById(
-      criteria.id,
-      criteria.goalId,
-    )) as Criteria;
+    const savedCriteria = (await criteriaRepository.findById(criteria.id, criteria.goalId)) as Criteria;
 
     const criteriaToUpdate: Criteria = {
       ...savedCriteria,
-      description: 'My criteria, my rules',
+      description: 'My criteria, my rules'
     };
 
-    await criteriaRepository.update(
-      savedCriteria.id,
-      savedCriteria.goalId,
-      criteriaToUpdate,
-    );
+    await criteriaRepository.update(savedCriteria.id, savedCriteria.goalId, criteriaToUpdate);
 
-    const updatedCriteria = await criteriaRepository.findById(
-      savedCriteria.id,
-      savedCriteria.goalId,
-    );
+    const updatedCriteria = await criteriaRepository.findById(savedCriteria.id, savedCriteria.goalId);
 
     expect(updatedCriteria?.description).toEqual('My criteria, my rules');
     expect(updatedCriteria?.updatedAt).not.toBeNull();
@@ -98,19 +84,13 @@ describe('Test Goal DynamoDB repository', () => {
   it('should delete a criteria', async () => {
     await criteriaRepository.save(criteria);
 
-    const savedCriteria = await criteriaRepository.findById(
-      criteria.id,
-      criteria.goalId,
-    );
+    const savedCriteria = await criteriaRepository.findById(criteria.id, criteria.goalId);
 
     expect(savedCriteria).not.toBeUndefined();
 
     await criteriaRepository.delete(criteria.id, criteria.goalId);
 
-    const deletedGoal = await criteriaRepository.findById(
-      criteria.id,
-      criteria.goalId,
-    );
+    const deletedGoal = await criteriaRepository.findById(criteria.id, criteria.goalId);
 
     expect(deletedGoal).toBeUndefined();
   });
@@ -121,7 +101,7 @@ describe('Test Goal DynamoDB repository', () => {
       goalId: goal.id,
       description: faker.lorem.sentence(),
       weight: faker.number.int({ min: 1, max: 10 }),
-      createdAt: new Date(),
+      createdAt: new Date()
     };
 
     await criteriaRepository.save(criteria);

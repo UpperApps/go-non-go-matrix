@@ -10,9 +10,11 @@ export class DynamodbCriteriaRepository implements CriteriaRepository {
   private CRITERIA_PK = (goalId: string): string => {
     return `GOAL#${goalId}`;
   };
+
   private CRITERIA_SK = (criteriaId: string): string => {
     return `CRITERIA#${criteriaId}`;
   };
+
   private readonly TABLE_NAME = 'go-non-go-matrix';
   constructor(private readonly dynamoDBDocument: DynamoDBDocument) {}
 
@@ -38,11 +40,12 @@ export class DynamodbCriteriaRepository implements CriteriaRepository {
     try {
       const params = {
         TableName: this.TABLE_NAME,
-        KeyConditionExpression: 'pk = :pk',
+        IndexName: 'GSI_GOAL_CRITERIA',
+        KeyConditionExpression: 'goalId = :goalId',
         ExpressionAttributeValues: {
-          ':pk': this.CRITERIA_PK(goalId),
+          ':goalId': goalId,
         },
-        ConsistentRead: true,
+        ConsistentRead: false,
       };
 
       const data = await this.dynamoDBDocument.query(params);
@@ -51,7 +54,7 @@ export class DynamodbCriteriaRepository implements CriteriaRepository {
       if (items !== undefined && items.length > 0) {
         criteria = items.map((item) => {
           return {
-            id: item.id,
+            id: item.criteriaId,
             goalId: item.goalId,
             description: item.description,
             weight: item.weight,
@@ -73,6 +76,7 @@ export class DynamodbCriteriaRepository implements CriteriaRepository {
     try {
       const params = {
         TableName: this.TABLE_NAME,
+        IndexName: 'GSI_GOAL_CRITERIA',
         Key: {
           pk: this.CRITERIA_PK(goalId),
           sk: this.CRITERIA_SK(id),
@@ -84,7 +88,7 @@ export class DynamodbCriteriaRepository implements CriteriaRepository {
 
       if (item !== undefined) {
         criteria = {
-          id: item.id,
+          id: item.criteriaId,
           goalId: item.goalId,
           description: item.description,
           weight: item.weight,
@@ -106,7 +110,7 @@ export class DynamodbCriteriaRepository implements CriteriaRepository {
         Item: {
           pk: this.CRITERIA_PK(criteria.goalId),
           sk: this.CRITERIA_SK(criteria.id),
-          id: criteria.id,
+          criteriaId: criteria.id,
           goalId: criteria.goalId,
           description: criteria.description,
           weight: criteria.weight,

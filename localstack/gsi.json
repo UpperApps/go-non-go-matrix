@@ -3,22 +3,21 @@
     "IndexName": "GSI_GOAL_CRITERIA",
     "KeySchema": [
       {
-        "AttributeName": "goal_id",
+        "AttributeName": "goalId",
         "KeyType": "HASH"
       },
       {
-        "AttributeName": "goal_criteria_sk",
+        "AttributeName": "criteriaId",
         "KeyType": "RANGE"
       }
     ],
     "Projection": {
       "ProjectionType": "INCLUDE",
       "NonKeyAttributes": [
-        "criteria_id",
-        "criteria_description",
+        "description",
         "weight",
-        "created_time",
-        "updated_time"
+        "createdAt",
+        "updatedAt"
       ]
     },
     "ProvisionedThroughput": {
@@ -30,22 +29,21 @@
     "IndexName": "GSI_GOAL_ITEM",
     "KeySchema": [
       {
-        "AttributeName": "goal_id",
+        "AttributeName": "goalId",
         "KeyType": "HASH"
       },
       {
-        "AttributeName": "goal_item_sk",
+        "AttributeName": "itemId",
         "KeyType": "RANGE"
       }
     ],
     "Projection": {
       "ProjectionType": "INCLUDE",
       "NonKeyAttributes": [
-        "item_id",
-        "item_name",
-        "item_description",
-        "created_time",
-        "updated_time"
+        "name",
+        "description",
+        "createdAt",
+        "updatedAt"
       ]
     },
     "ProvisionedThroughput": {
@@ -57,22 +55,22 @@
     "IndexName": "GSI_JUDGEMENT_MATRIX",
     "KeySchema": [
       {
-        "AttributeName": "goal_id",
+        "AttributeName": "goalId",
         "KeyType": "HASH"
       },
       {
-        "AttributeName": "criteria_pair_sk",
+        "AttributeName": "criteriaPairSK",
         "KeyType": "RANGE"
       }
     ],
     "Projection": {
       "ProjectionType": "INCLUDE",
       "NonKeyAttributes": [
-        "criteria_pair",
-        "priority_on",
+        "criteriaPair",
+        "priorityOn",
         "score",
-        "created_time",
-        "updated_time"
+        "createdAt",
+        "updatedAt"
       ]
     },
     "ProvisionedThroughput": {
@@ -84,21 +82,21 @@
     "IndexName": "GSI_ITEM_SCORE",
     "KeySchema": [
       {
-        "AttributeName": "item_id",
+        "AttributeName": "itemId",
         "KeyType": "HASH"
       },
       {
-        "AttributeName": "criteria_id",
+        "AttributeName": "criteriaId",
         "KeyType": "RANGE"
       }
     ],
     "Projection": {
       "ProjectionType": "INCLUDE",
       "NonKeyAttributes": [
-        "item_name",
+        "name",
         "score",
-        "created_time",
-        "updated_time"
+        "createdAt",
+        "updatedAt"
       ]
     },
     "ProvisionedThroughput": {

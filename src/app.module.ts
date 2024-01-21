@@ -9,6 +9,7 @@ import { DynamodbGoalRepository } from './infrastructure/repository/dynamodb.goa
 import { GoalController } from './presentation/goal.controller';
 import { DynamodbCriteriaRepository } from './infrastructure/repository/dynamodb.criteria.repository';
 import { CriteriaRepository } from './domain/criteria/criteria.repository';
+import { CriteriaController } from './presentation/criteria.controller';
 
 const dynamoDBDocumentProvider = {
   provide: DynamoDBDocument,
@@ -31,7 +32,7 @@ const criteriaRepositoryProvider = {
 };
 
 @Module({
-  controllers: [UserController, GoalController],
+  controllers: [UserController, GoalController, CriteriaController],
   providers: [
     dynamoDBDocumentProvider,
     userRepositoryProvider,

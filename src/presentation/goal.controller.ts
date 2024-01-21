@@ -17,13 +17,17 @@ import { GoalInDto } from './dto/in/goal.in.dto';
 import { v4 as uuid } from 'uuid';
 import { Goal } from '../domain/goal/goal';
 import { ApiTags } from '@nestjs/swagger';
+import { GoalService } from '../domain/goal/goal.service';
 
 @ApiTags('User Goals')
 @Controller('users/:userId/goals')
 export class GoalController {
   private readonly logger = new Logger(GoalController.name);
 
-  constructor(@Inject(GoalRepository) private readonly goalRepository: GoalRepository) {}
+  constructor(
+    @Inject(GoalRepository) private readonly goalRepository: GoalRepository,
+    @Inject(GoalService) private readonly goalService: GoalService
+  ) {}
 
   @Get()
   async findAll(@Param('userId') userId: string): Promise<GoalOutDto[]> {
@@ -69,7 +73,7 @@ export class GoalController {
 
     const goalToSave = { ...goal, id, userId, createdAt } as Goal;
 
-    await this.goalRepository.save(goalToSave);
+    await this.goalService.save(goalToSave);
   }
 
   @Put(':id')

@@ -7,36 +7,31 @@ import { UserRepository } from '../../src/domain/user/user.repository';
 import { GoalService } from '../../src/domain/goal/goal.service';
 import { EntityNotFoundException } from '../../src/domain/exceptions/entity-not-found-exception';
 import { Test, TestingModule } from '@nestjs/testing';
-import mock = jest.mock;
+import { createMock, DeepMocked } from '@golevelup/ts-jest';
 
 describe('Test Goal service', () => {
   let user: User;
   let goal: Goal;
   let goalService: GoalService;
-  let goalRepository: GoalRepository;
-  let userRepository: UserRepository;
+  let goalRepository: DeepMocked<GoalRepository>;
+  let userRepository: DeepMocked<UserRepository>;
 
   beforeEach(async () => {
     const testingModule: TestingModule = await Test.createTestingModule({
       providers: [
         {
           provide: UserRepository,
-          useValue: {
-            findById: jest.fn()
-          }
+          useValue: createMock<UserRepository>()
         },
         {
           provide: GoalRepository,
-          useValue: {
-            save: jest.fn(),
-            findById: jest.fn()
-          }
+          useValue: createMock<GoalRepository>()
         }
       ]
     }).compile();
 
-    userRepository = testingModule.get<UserRepository>(UserRepository);
-    goalRepository = testingModule.get<GoalRepository>(GoalRepository);
+    userRepository = testingModule.get(UserRepository);
+    goalRepository = testingModule.get(GoalRepository);
     goalService = new GoalService(goalRepository, userRepository);
 
     user = {
@@ -59,21 +54,20 @@ describe('Test Goal service', () => {
   });
 
   it('should save a goal and find it by id', async () => {
-    jest.fn(userRepository.findById).mockReturnValue(Promise.resolve(user));
-    jest.fn(goalRepository.save).mockReturnValue(Promise.resolve(void 0));
+    userRepository.findById.mockResolvedValue(user);
+    goalRepository.save.mockResolvedValue(void 0);
     await goalService.save(goal);
 
     expect(userRepository.findById).toHaveBeenCalledWith(goal.userId);
     expect(goalRepository.save).toHaveBeenCalledWith(goal);
   });
 
-  it('should throw an exception if user does not exists', async () => {
-    const goalWithInvalidUserId = { ...goal, userId: uuidv4() };
-    await goalService.save(goalWithInvalidUserId);
+  it('should throw an exception if user does not exists', () => {
+    userRepository.findById.mockResolvedValue(undefined);
 
-    const savedGoal = await goalRepository.findById(goal.id, goal.userId);
-
+    expect(async () => {
+      await goalService.save(goal);
+    }).rejects.toThrow(EntityNotFoundException);
     expect(goalRepository.save).not.toHaveBeenCalled();
-    expect(savedGoal).toThrow(EntityNotFoundException);
   });
 });

@@ -15,7 +15,7 @@ export class GoalService {
 
   public async save(goal: Goal) {
     const user = await this.userRepository.findById(goal.userId);
-    if (!user) {
+    if (user === undefined || !user) {
       throw new EntityNotFoundException(`User with id ${goal.userId} not found`);
     }
 

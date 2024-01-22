@@ -4,7 +4,6 @@ import { CriteriaRepository } from './criteria.repository';
 import { EntityNotFoundException } from '../exceptions/entity-not-found-exception';
 import { Criteria } from './criteria';
 
-// TASK: Create a unit test for this service
 @Injectable()
 export class CriteriaService {
   constructor(

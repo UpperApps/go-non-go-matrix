@@ -6,7 +6,6 @@ import { Goal } from '../../src/domain/goal/goal';
 import { GoalRepository } from '../../src/domain/goal/goal.repository';
 import { v4 as uuidv4 } from 'uuid';
 import { fakerEN as faker } from '@faker-js/faker';
-import { GoalService } from '../../src/domain/goal/goal.service';
 
 jest.mock('../../src/domain/goal/goal.service', () => {
   return {

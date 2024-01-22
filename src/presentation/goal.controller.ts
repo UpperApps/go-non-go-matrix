@@ -27,7 +27,7 @@ export class GoalController {
 
   constructor(
     @Inject(GoalRepository) private readonly goalRepository: GoalRepository,
-    private goalService: GoalService
+    private readonly goalService: GoalService
   ) {}
 
   @Get()

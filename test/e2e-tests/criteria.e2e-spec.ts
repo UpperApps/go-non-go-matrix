@@ -7,6 +7,16 @@ import * as request from 'supertest';
 import { CriteriaRepository } from '../../src/domain/criteria/criteria.repository';
 import { Criteria } from '../../src/domain/criteria/criteria';
 
+jest.mock('../../src/domain/criteria/criteria.service', () => {
+  return {
+    CriteriaService: jest.fn().mockImplementation(() => {
+      return {
+        save: () => {}
+      };
+    })
+  };
+});
+
 describe('CriteriaController (e2e)', () => {
   let app: INestApplication;
   let criteria: Criteria;
@@ -40,6 +50,8 @@ describe('CriteriaController (e2e)', () => {
     for (const criterion of criteriaList) {
       await criteriaRepository.delete(criterion.id, criterion.goalId);
     }
+
+    jest.clearAllMocks();
   });
 
   it('/users/:userId/goals/:goalId/criteria (GET) should return a list of criteria', async () => {
@@ -80,7 +92,6 @@ describe('CriteriaController (e2e)', () => {
   });
 
   it('/users/:userId/goals/:goalId/criteria (POST) should return 201 for a valid criteria', async () => {
-    const spy = jest.spyOn(criteriaRepository, 'save');
     const response = await request(app.getHttpServer())
       .post(`/users/123/goals/${criteria.goalId}/criteria`)
       .send({
@@ -89,7 +100,6 @@ describe('CriteriaController (e2e)', () => {
       });
 
     expect(response.status).toBe(201);
-    expect(spy).toHaveBeenCalled();
   });
 
   it('/users/:userId/goals/:goalId/criteria/:id (PUT) should return 200 for an existent goal', async () => {

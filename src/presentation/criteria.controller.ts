@@ -17,6 +17,8 @@ import { v4 as uuid } from 'uuid';
 import { CriteriaInDto } from './dto/in/criteria.in.dto';
 import { Criteria } from '../domain/criteria/criteria';
 import { ApiTags } from '@nestjs/swagger';
+import { CriteriaService } from '../domain/criteria/criteria.service';
+import { EntityNotFoundException } from '../domain/exceptions/entity-not-found-exception';
 
 @ApiTags('Goals Criteria')
 @Controller('users/:userId/goals/:goalId/criteria')
@@ -25,7 +27,8 @@ export class CriteriaController {
 
   constructor(
     @Inject(CriteriaRepository)
-    private readonly criteriaRepository: CriteriaRepository
+    private readonly criteriaRepository: CriteriaRepository,
+    private readonly criteriaService: CriteriaService
   ) {}
 
   @Get()
@@ -64,13 +67,23 @@ export class CriteriaController {
   }
 
   @Post()
-  async create(@Body() criteria: CriteriaInDto, @Param('goalId') goalId: string): Promise<void> {
+  async create(
+    @Body() criteria: CriteriaInDto,
+    @Param('userId') userId: string,
+    @Param('goalId') goalId: string
+  ): Promise<void> {
     const id = uuid();
     const createdAt = new Date();
 
     const criteriaToSave = { ...criteria, id, goalId, createdAt } as Criteria;
 
-    await this.criteriaRepository.save(criteriaToSave);
+    try {
+      await this.criteriaService.save(userId, goalId, criteriaToSave);
+    } catch (error) {
+      if (error instanceof EntityNotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+    }
   }
 
   @Put(':id')

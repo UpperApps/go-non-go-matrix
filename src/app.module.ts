@@ -11,6 +11,7 @@ import { DynamodbCriteriaRepository } from './infrastructure/repository/dynamodb
 import { CriteriaRepository } from './domain/criteria/criteria.repository';
 import { CriteriaController } from './presentation/criteria.controller';
 import { GoalService } from './domain/goal/goal.service';
+import { CriteriaService } from './domain/criteria/criteria.service';
 
 const dynamoDBDocumentProvider = {
   provide: DynamoDBDocument,
@@ -39,7 +40,8 @@ const criteriaRepositoryProvider = {
     userRepositoryProvider,
     goalRepositoryProvider,
     criteriaRepositoryProvider,
-    GoalService
+    GoalService,
+    CriteriaService
   ]
 })
 export class AppModule {}

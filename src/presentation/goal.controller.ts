@@ -18,6 +18,7 @@ import { v4 as uuid } from 'uuid';
 import { Goal } from '../domain/goal/goal';
 import { ApiTags } from '@nestjs/swagger';
 import { GoalService } from '../domain/goal/goal.service';
+import { EntityNotFoundException } from '../domain/exceptions/entity-not-found-exception';
 
 @ApiTags('User Goals')
 @Controller('users/:userId/goals')
@@ -26,7 +27,7 @@ export class GoalController {
 
   constructor(
     @Inject(GoalRepository) private readonly goalRepository: GoalRepository,
-    @Inject(GoalService) private readonly goalService: GoalService
+    private goalService: GoalService
   ) {}
 
   @Get()
@@ -73,7 +74,13 @@ export class GoalController {
 
     const goalToSave = { ...goal, id, userId, createdAt } as Goal;
 
-    await this.goalService.save(goalToSave);
+    try {
+      await this.goalService.save(goalToSave);
+    } catch (error) {
+      if (error instanceof EntityNotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+    }
   }
 
   @Put(':id')

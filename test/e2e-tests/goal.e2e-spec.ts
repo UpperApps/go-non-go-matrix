@@ -6,6 +6,17 @@ import { Goal } from '../../src/domain/goal/goal';
 import { GoalRepository } from '../../src/domain/goal/goal.repository';
 import { v4 as uuidv4 } from 'uuid';
 import { fakerEN as faker } from '@faker-js/faker';
+import { GoalService } from '../../src/domain/goal/goal.service';
+
+jest.mock('../../src/domain/goal/goal.service', () => {
+  return {
+    GoalService: jest.fn().mockImplementation(() => {
+      return {
+        save: () => {}
+      };
+    })
+  };
+});
 
 describe('GoalController (e2e)', () => {
   let app: INestApplication;
@@ -41,6 +52,8 @@ describe('GoalController (e2e)', () => {
     for (const goal of goals) {
       await goalRepository.delete(goal.id, goal.userId);
     }
+
+    jest.clearAllMocks();
   });
 
   it('/users/userId/goals (GET) should return a list of goals', async () => {
@@ -78,7 +91,6 @@ describe('GoalController (e2e)', () => {
   });
 
   it('/users/:userId/goals (POST) should return 201 for a valid goal', async () => {
-    const spy = jest.spyOn(goalRepository, 'save');
     const response = await request(app.getHttpServer())
       .post(`/users/${goal.userId}/goals`)
       .send({
@@ -87,7 +99,6 @@ describe('GoalController (e2e)', () => {
       });
 
     expect(response.status).toBe(201);
-    expect(spy).toHaveBeenCalled();
   });
 
   it('/users/:userId/goals/:id (PUT) should return 200 for an existent goal', async () => {

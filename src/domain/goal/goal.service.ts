@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { GoalRepository } from './goal.repository';
 import { Goal } from './goal';
 import { UserRepository } from '../user/user.repository';
@@ -6,9 +6,10 @@ import { EntityNotFoundException } from '../exceptions/entity-not-found-exceptio
 
 @Injectable()
 export class GoalService {
-  private readonly goalRepository: GoalRepository;
-  private readonly userRepository: UserRepository;
-  constructor(goalRepository: GoalRepository, userRepository: UserRepository) {
+  constructor(
+    @Inject(GoalRepository) private readonly goalRepository: GoalRepository,
+    @Inject(UserRepository) private readonly userRepository: UserRepository
+  ) {
     this.goalRepository = goalRepository;
     this.userRepository = userRepository;
   }

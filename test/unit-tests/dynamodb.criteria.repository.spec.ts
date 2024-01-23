@@ -8,7 +8,7 @@ import { Criteria } from '../../src/domain/criteria/criteria';
 import { CriteriaRepository } from '../../src/domain/criteria/criteria.repository';
 import { DynamodbCriteriaRepository } from '../../src/infrastructure/repository/dynamodb.criteria.repository';
 
-describe('Test Goal DynamoDB repository', () => {
+describe('Test Criteria DynamoDB repository', () => {
   let goal: Goal;
   let criteria: Criteria;
   let criteriaRepository: CriteriaRepository;
@@ -90,9 +90,9 @@ describe('Test Goal DynamoDB repository', () => {
 
     await criteriaRepository.delete(criteria.id, criteria.goalId);
 
-    const deletedGoal = await criteriaRepository.findById(criteria.id, criteria.goalId);
+    const deletedCriteria = await criteriaRepository.findById(criteria.id, criteria.goalId);
 
-    expect(deletedGoal).toBeUndefined();
+    expect(deletedCriteria).toBeUndefined();
   });
 
   it('should find all criteria', async () => {
@@ -107,8 +107,8 @@ describe('Test Goal DynamoDB repository', () => {
     await criteriaRepository.save(criteria);
     await criteriaRepository.save(anotherCriteria);
 
-    const goals = await criteriaRepository.findAll(goal.id);
+    const criteriaList = await criteriaRepository.findAll(goal.id);
 
-    expect(goals.length).toEqual(2);
+    expect(criteriaList.length).toEqual(2);
   });
 });

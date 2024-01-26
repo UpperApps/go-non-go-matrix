@@ -73,7 +73,7 @@ describe('Test Criteria DynamoDB repository', () => {
       description: 'My criteria, my rules'
     };
 
-    await criteriaRepository.update(savedCriteria.id, savedCriteria.goalId, criteriaToUpdate);
+    await criteriaRepository.update(criteriaToUpdate);
 
     const updatedCriteria = await criteriaRepository.findById(savedCriteria.id, savedCriteria.goalId);
 

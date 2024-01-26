@@ -74,7 +74,7 @@ describe('Test Goal DynamoDB repository', () => {
       name: 'Goals 2024'
     };
 
-    await goalRepository.update(savedGoal.id, savedGoal.userId, goalToUpdate);
+    await goalRepository.update(goalToUpdate);
 
     const updatedGoal = await goalRepository.findById(savedGoal.id, savedGoal.userId);
 

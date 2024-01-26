@@ -93,7 +93,7 @@ export class CriteriaController {
       const criteriaFromDB = await this.criteriaRepository.findById(id, goalId);
       const criteriaToUpdate = { ...criteriaFromDB, ...goal } as Criteria;
 
-      await this.criteriaRepository.update(id, goalId, criteriaToUpdate);
+      await this.criteriaRepository.update(criteriaToUpdate);
     } catch (error) {
       this.logger.error(`Error updating criteria: ${error}`);
     }

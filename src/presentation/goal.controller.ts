@@ -90,7 +90,7 @@ export class GoalController {
       const goalFromDB = await this.goalRepository.findById(id, userId);
       const goalToUpdate = { ...goalFromDB, ...goal } as Goal;
 
-      await this.goalRepository.update(id, userId, goalToUpdate);
+      await this.goalRepository.update(goalToUpdate);
     } catch (error) {
       this.logger.error(`Error updating goal: ${error}`);
     }

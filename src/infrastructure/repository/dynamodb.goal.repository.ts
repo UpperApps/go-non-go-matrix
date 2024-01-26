@@ -50,7 +50,7 @@ export class DynamodbGoalRepository implements GoalRepository {
 
     return goals;
   }
-  async findById(id: string, userId: string): Promise<Goal | undefined> {
+  async findById(goalId: string, userId: string): Promise<Goal | undefined> {
     let goal: Goal | undefined;
 
     try {
@@ -58,7 +58,7 @@ export class DynamodbGoalRepository implements GoalRepository {
         TableName: this.TABLE_NAME,
         Key: {
           pk: this.GOAL_PK(userId),
-          sk: this.GOAL_SK(id)
+          sk: this.GOAL_SK(goalId)
         }
       };
 
@@ -103,13 +103,13 @@ export class DynamodbGoalRepository implements GoalRepository {
       this.logger.error(`Error saving goal: ${error}`);
     }
   }
-  async delete(id: string, userId: string): Promise<void> {
+  async delete(goalId: string, userId: string): Promise<void> {
     try {
       const params = {
         TableName: this.TABLE_NAME,
         Key: {
           pk: this.GOAL_PK(userId),
-          sk: this.GOAL_SK(id)
+          sk: this.GOAL_SK(goalId)
         }
       };
 
@@ -119,13 +119,13 @@ export class DynamodbGoalRepository implements GoalRepository {
     }
   }
 
-  async update(id: string, userId: string, goal: Goal): Promise<void> {
+  async update(goal: Goal): Promise<void> {
     try {
       const params = new UpdateCommand({
         TableName: this.TABLE_NAME,
         Key: {
-          pk: this.GOAL_PK(userId),
-          sk: this.GOAL_SK(id)
+          pk: this.GOAL_PK(goal.userId),
+          sk: this.GOAL_SK(goal.id)
         },
         UpdateExpression: 'SET #n = :name, #d = :description, #ms = :maxScore, #u = :updatedAt',
         ExpressionAttributeNames: {

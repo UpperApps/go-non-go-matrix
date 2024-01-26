@@ -73,7 +73,7 @@ describe('Test Item DynamoDB repository', () => {
       description: 'My item, my rules'
     };
 
-    await itemRepository.update(savedItem.id, savedItem.goalId, itemToUpdate);
+    await itemRepository.update(itemToUpdate);
 
     const updatedItem = await itemRepository.findById(savedItem.id, savedItem.goalId);
 

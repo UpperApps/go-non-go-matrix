@@ -18,13 +18,13 @@ export class DynamodbCriteriaRepository implements CriteriaRepository {
   private readonly TABLE_NAME = 'go-non-go-matrix';
   constructor(private readonly dynamoDBDocument: DynamoDBDocument) {}
 
-  async delete(id: string, goalId: string): Promise<void> {
+  async delete(criteriaId: string, goalId: string): Promise<void> {
     try {
       const params = {
         TableName: this.TABLE_NAME,
         Key: {
           pk: this.CRITERIA_PK(goalId),
-          sk: this.CRITERIA_SK(id)
+          sk: this.CRITERIA_SK(criteriaId)
         }
       };
 
@@ -40,10 +40,10 @@ export class DynamodbCriteriaRepository implements CriteriaRepository {
     try {
       const params = {
         TableName: this.TABLE_NAME,
-        IndexName: 'GSI_GOAL_CRITERIA',
-        KeyConditionExpression: 'goalId = :goalId',
+        KeyConditionExpression: 'pk = :pk AND begins_with(sk, :sk)',
         ExpressionAttributeValues: {
-          ':goalId': goalId
+          ':pk': this.CRITERIA_PK(goalId),
+          ':sk': 'CRITERIA#'
         },
         ConsistentRead: false
       };
@@ -70,7 +70,7 @@ export class DynamodbCriteriaRepository implements CriteriaRepository {
     return criteria;
   }
 
-  async findById(id: string, goalId: string): Promise<Criteria | undefined> {
+  async findById(criteriaId: string, goalId: string): Promise<Criteria | undefined> {
     let criteria: Criteria | undefined;
 
     try {
@@ -79,7 +79,7 @@ export class DynamodbCriteriaRepository implements CriteriaRepository {
         IndexName: 'GSI_GOAL_CRITERIA',
         Key: {
           pk: this.CRITERIA_PK(goalId),
-          sk: this.CRITERIA_SK(id)
+          sk: this.CRITERIA_SK(criteriaId)
         }
       };
 
@@ -124,13 +124,13 @@ export class DynamodbCriteriaRepository implements CriteriaRepository {
     }
   }
 
-  async update(id: string, goalId: string, criteria: Criteria): Promise<void> {
+  async update(criteria: Criteria): Promise<void> {
     try {
       const params = new UpdateCommand({
         TableName: this.TABLE_NAME,
         Key: {
-          pk: this.CRITERIA_PK(goalId),
-          sk: this.CRITERIA_SK(id)
+          pk: this.CRITERIA_PK(criteria.goalId),
+          sk: this.CRITERIA_SK(criteria.id)
         },
         UpdateExpression: 'SET #d = :description, #w = :weight, #u = :updatedAt',
         ExpressionAttributeNames: {

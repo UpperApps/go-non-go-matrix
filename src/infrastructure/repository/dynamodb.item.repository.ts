@@ -45,7 +45,6 @@ export class DynamodbItemRepository implements ItemRepository {
     try {
       const params = {
         TableName: this.TABLE_NAME,
-        IndexName: 'GSI_GOAL_ITEM',
         Key: {
           pk: this.ITEM_PK(goalId),
           sk: this.ITEM_SK(id)
@@ -77,10 +76,10 @@ export class DynamodbItemRepository implements ItemRepository {
     try {
       const params = {
         TableName: this.TABLE_NAME,
-        IndexName: 'GSI_GOAL_ITEM',
-        KeyConditionExpression: 'goalId = :goalId',
+        KeyConditionExpression: 'pk = :pk AND begins_with(sk, :sk)',
         ExpressionAttributeValues: {
-          ':goalId': goalId
+          ':pk': this.ITEM_PK(goalId),
+          ':sk': 'ITEM#'
         },
         ConsistentRead: false
       };
@@ -106,13 +105,13 @@ export class DynamodbItemRepository implements ItemRepository {
 
     return item;
   }
-  async update(id: string, goalId: string, item: Item): Promise<void> {
+  async update(item: Item): Promise<void> {
     try {
       const params = new UpdateCommand({
         TableName: this.TABLE_NAME,
         Key: {
-          pk: this.ITEM_PK(goalId),
-          sk: this.ITEM_SK(id)
+          pk: this.ITEM_PK(item.goalId),
+          sk: this.ITEM_SK(item.id)
         },
         UpdateExpression: 'SET #n = :name, #d = :description, #u = :updatedAt',
         ExpressionAttributeNames: {
@@ -133,13 +132,13 @@ export class DynamodbItemRepository implements ItemRepository {
       this.logger.error(`Error updating the item: ${error}`);
     }
   }
-  async delete(id: string, goalId: string): Promise<void> {
+  async delete(itemId: string, goalId: string): Promise<void> {
     try {
       const params = {
         TableName: this.TABLE_NAME,
         Key: {
           pk: this.ITEM_PK(goalId),
-          sk: this.ITEM_SK(id)
+          sk: this.ITEM_SK(itemId)
         }
       };
 

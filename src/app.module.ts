@@ -14,6 +14,8 @@ import { GoalService } from './domain/goal/goal.service';
 import { CriteriaService } from './domain/criteria/criteria.service';
 import { ItemRepository } from './domain/item/item.repository';
 import { DynamodbItemRepository } from './infrastructure/repository/dynamodb.item.repository';
+import { ItemController } from './presentation/item.controller';
+import { ItemService } from './domain/item/item.service';
 
 const dynamoDBDocumentProvider = {
   provide: DynamoDBDocument,
@@ -41,7 +43,7 @@ const itemRepositoryProvider = {
 };
 
 @Module({
-  controllers: [UserController, GoalController, CriteriaController],
+  controllers: [UserController, GoalController, CriteriaController, ItemController],
   providers: [
     dynamoDBDocumentProvider,
     userRepositoryProvider,
@@ -49,7 +51,8 @@ const itemRepositoryProvider = {
     criteriaRepositoryProvider,
     itemRepositoryProvider,
     GoalService,
-    CriteriaService
+    CriteriaService,
+    ItemService
   ]
 })
 export class AppModule {}

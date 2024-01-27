@@ -10,6 +10,7 @@ export class CriteriaInDto {
   @Min(0)
   @Max(10)
   public readonly weight: number;
+
   constructor(description: string, weight?: number) {
     this.description = description;
     this.weight = weight || 0;

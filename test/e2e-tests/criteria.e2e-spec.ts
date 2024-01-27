@@ -75,13 +75,13 @@ describe('CriteriaController (e2e)', () => {
     expect(response.body.updatedAt).toBeUndefined();
   });
 
-  it('/users/:userId/goals/:id (GET) should return 404 for an non existent criteria', async () => {
+  it('/users/:userId/goals/:goalId/criteria/:id (GET) should return 404 for an non existent criteria', async () => {
     const response = await request(app.getHttpServer()).get(`/users/123/goals/${criteria.goalId}/criteria/1234`);
 
     expect(response.status).toBe(404);
   });
 
-  it('/users/:userId/goals/:id (DELETE) should return 204 for an existent criteria', async () => {
+  it('/users/:userId/goals/:goalId/criteria/:id (DELETE) should return 204 for an existent criteria', async () => {
     const spy = jest.spyOn(criteriaRepository, 'delete');
     const response = await request(app.getHttpServer()).delete(
       `/users/123/goals/${criteria.goalId}/criteria/${criteria.id}`
@@ -102,7 +102,7 @@ describe('CriteriaController (e2e)', () => {
     expect(response.status).toBe(201);
   });
 
-  it('/users/:userId/goals/:goalId/criteria/:id (PUT) should return 200 for an existent goal', async () => {
+  it('/users/:userId/goals/:goalId/criteria/:id (PUT) should return 200 for an existent criteria', async () => {
     const spy = jest.spyOn(criteriaRepository, 'update');
     const response = await request(app.getHttpServer())
       .put(`/users/123/goals/${criteria.goalId}/criteria/${criteria.id}`)

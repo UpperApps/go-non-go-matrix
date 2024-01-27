@@ -45,7 +45,7 @@ class JudgementMatrix {
     -criteriaToBeRated: Criteria
     -criteriaToCompare: Criteria
     -priority_on: Integer
-    -socore: Integer
+    -score: Integer
     -createdAt: LocalDateTime
     -updatedAt: LocalDateTime
 }

@@ -14,24 +14,17 @@ export class JudgementMatrixService {
     return 'Judgement Matrix Created';
   }
 
-  async getJudgementMatrix(goalId: string): Promise<Criteria[][]> {
-    const criteriaMatrix: Criteria[][] = [];
-
+  async getCriteriaCartesianProduct(goalId: string): Promise<Criteria[][]> {
     const criteria = await this.criteriaRepository.findAll(goalId);
 
-    // Create a matrix of criteria to be evaluated from the list of criteria from db
-    for (let i = 0; i < criteria.length; i++) {
-      for (let j = 0; j < criteria.length; j++) {
-        if (criteria[i].id !== criteria[j].id) {
-          criteriaMatrix.push([criteria[i], criteria[j]]);
-        }
-      }
-    }
+    const criteriaMatrix = criteria.reduce((acc, cur, currentIndex, originalArray) => {
+      originalArray.reduce((acc2, cur2) => {
+        acc.push([cur, cur2]);
+        return acc2;
+      }, []);
 
-    // Get the list of criteria already evaluated from db and compare it with the matrix of criteria to be evaluated
-    // If there is a pair of criteria that is not yet evaluated, insert it to the matrix of criteria to be evaluated
-
-    console.log(criteriaMatrix);
+      return acc;
+    }, [] as Criteria[][]);
 
     return criteriaMatrix;
   }

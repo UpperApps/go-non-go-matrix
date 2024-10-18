@@ -34,33 +34,33 @@ describe('Test JudgementMatrixService', () => {
 
   it('should save the matrix of criteria to be evaluated', async () => {});
 
-  it('should get the matrix of criteria to be evaluated', async () => {
+  it('should return the matrix of criteria to be evaluated including new criteria', async () => {
     const goalId = uuidv4();
     const criteria: Criteria[] = [
       {
         id: uuidv4(),
-        goalId: uuidv4(),
+        goalId: goalId,
         description: faker.lorem.sentence(),
         weight: faker.number.int({ min: 1, max: 10 }),
         createdAt: new Date()
       },
       {
         id: uuidv4(),
-        goalId: uuidv4(),
+        goalId: goalId,
         description: faker.lorem.sentence(),
         weight: faker.number.int({ min: 1, max: 10 }),
         createdAt: new Date()
       },
       {
         id: uuidv4(),
-        goalId: uuidv4(),
+        goalId: goalId,
         description: faker.lorem.sentence(),
         weight: faker.number.int({ min: 1, max: 10 }),
         createdAt: new Date()
       },
       {
         id: uuidv4(),
-        goalId: uuidv4(),
+        goalId: goalId,
         description: faker.lorem.sentence(),
         weight: faker.number.int({ min: 1, max: 10 }),
         createdAt: new Date()
@@ -69,14 +69,63 @@ describe('Test JudgementMatrixService', () => {
 
     criteriaRepository.findAll.mockResolvedValue(criteria);
 
-    const criteriaMatrix = await judgementMatrixService.getJudgementMatrix(goalId);
+    const criteriaMatrix = await judgementMatrixService.getCriteriaCartesianProduct(goalId);
 
     console.log(criteriaMatrix);
 
-    expect(criteriaMatrix.length).toBe(12);
+    expect(criteriaMatrix.length).toBe(16);
   });
 
-  it('should update the matrix of criteria to be evaluated', async () => {});
+  it('should update the matrix of criteria to be evaluated', async () => {
+    const goalId = uuidv4();
+    const criteria: Criteria[] = [
+      {
+        id: uuidv4(),
+        goalId: goalId,
+        description: faker.lorem.sentence(),
+        weight: faker.number.int({ min: 1, max: 10 }),
+        createdAt: new Date()
+      },
+      {
+        id: uuidv4(),
+        goalId: goalId,
+        description: faker.lorem.sentence(),
+        weight: faker.number.int({ min: 1, max: 10 }),
+        createdAt: new Date()
+      },
+      {
+        id: uuidv4(),
+        goalId: goalId,
+        description: faker.lorem.sentence(),
+        weight: faker.number.int({ min: 1, max: 10 }),
+        createdAt: new Date()
+      },
+      {
+        id: uuidv4(),
+        goalId: goalId,
+        description: faker.lorem.sentence(),
+        weight: faker.number.int({ min: 1, max: 10 }),
+        createdAt: new Date()
+      }
+    ];
+
+    criteriaRepository.findAll.mockResolvedValue(criteria);
+
+    const criteriaMatrix = await judgementMatrixService.getCriteriaCartesianProduct(goalId);
+
+    // TODO: Compare if the two criteria in the array are the same.
+    // TODO: If they are the same, remove the array from the matrix.
+    const arrayWithoutSameCriteria = criteriaMatrix.reduce((acc, currentValue) => {
+      return currentValue[0].id !== currentValue[1].id ? acc.push([currentValue[0], currentValue[1]]) : acc;
+    }, [] as Criteria[][]);
+
+    // TODO: Compare if we have another identical criteria array in the matrix. If we do, remove it.
+
+    console.log(arrayWithoutSameCriteria);
+
+    expect(arrayWithoutSameCriteria).toBe(12);
+    expect(criteriaMatrix.length).toBe(16);
+  });
 
   it('should delete the matrix of criteria to be evaluated', async () => {});
 });

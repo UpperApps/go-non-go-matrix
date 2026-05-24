@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "skills": {
+    "docs-writer": {
+      "name": "docs-writer",
+      "source": "local",
+      "contentHash": "c49827c59d2e27d313731dfd36314cfde0e8dbf15be0e8f813d2f8b751546b0c",
+      "installedAt": "2026-05-24T22:27:24.834Z",
+      "updatedAt": "2026-05-24T22:27:24.842Z",
+      "agents": [
+        "opencode",
+        "gemini"
+      ],
+      "method": "symlink",
+      "global": false
+    },
+    "jira-assistant": {
+      "name": "jira-assistant",
+      "source": "local",
+      "contentHash": "fa63880889d2206548e33489a0ac1aa849c4e6ab879ea769c2715521a8231c8a",
+      "installedAt": "2026-05-24T22:27:24.838Z",
+      "updatedAt": "2026-05-24T22:27:24.838Z",
+      "agents": [
+        "opencode"
+      ],
+      "method": "symlink",
+      "global": false
+    }
+  }
+}

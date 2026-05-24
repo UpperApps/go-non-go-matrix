@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   localstack:
     image: localstack/localstack
@@ -8,10 +7,10 @@ services:
       - "127.0.0.1:4566:4566"            # LocalStack Gateway
       - "127.0.0.1:4510-4559:4510-4559"  # external services port range
     environment:
-      # Declare which aws services will be used in localstack
+      # Declare which aws services will be used in the localstack
       - SERVICES=dynamodb
       - DEBUG=1
-      # These variables are needed for localstack
+      # These variables are needed for the localstack
       - AWS_DEFAULT_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=devuser
       - AWS_SECRET_ACCESS_KEY=devaccesskey

@@ -1,6 +1,6 @@
 services:
   localstack:
-    image: localstack/localstack
+    image: localstack/localstack:3.8.0
     container_name: go-non-go-matrix-container
     hostname: localstack
     ports:
